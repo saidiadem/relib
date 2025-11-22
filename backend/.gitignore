@@ -44,7 +44,6 @@ Thumbs.db
 # NLP Models (downloaded)
 *.bin
 *.pkl
-models/
 
 # Testing
 .pytest_cache/
