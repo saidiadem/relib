@@ -1,0 +1,30 @@
+{
+  "pacification": {
+    "category": "violence_euphemism",
+    "alternatives": ["military conquest", "violent suppression", "massacre"],
+    "explanation": "Colonial euphemism for violent military campaigns against indigenous populations",
+    "severity": "high"
+  },
+  "tribe": {
+    "category": "diminishing_terminology",
+    "alternatives": ["nation", "people", "ethnic group", "community"],
+    "explanation": "Term imposed by colonizers to diminish political organization",
+    "severity": "medium"
+  },
+  "primitive": {
+    "category": "racist_hierarchy",
+    "alternatives": ["indigenous", "traditional", "pre-colonial"],
+    "explanation": "Implies evolutionary inferiority; used to justify colonial intervention",
+    "severity": "high"
+  },
+  "discover": {
+    "category": "erasure",
+    "alternatives": [
+      "encountered",
+      "arrived at",
+      "documented for European audiences"
+    ],
+    "explanation": "Erases indigenous presence and knowledge of places",
+    "severity": "high"
+  }
+}
