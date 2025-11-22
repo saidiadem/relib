@@ -431,16 +431,18 @@
       </div>
     </div>
 
+    <!-- Load API client -->
+    <script src="api-client.js"></script>
     <!-- Load graph data and functionality -->
     <script src="graph-data.js"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
         // This method is responsible for drawing the graph
-        function drawGraph() {
+        async function drawGraph() {
           var container = document.getElementById("mynetwork");
 
           // Load graph data from the external file - explicitly extract the datasets
-          var graphData = loadGraphData();
+          var graphData = await loadGraphData();
           nodes = graphData.nodes;
           edges = graphData.edges;
 
@@ -536,7 +538,10 @@
         }
 
         // Draw the graph
-        drawGraph();
+        drawGraph().catch(error => {
+          console.error("Failed to draw graph:", error);
+          alert("Failed to load graph. Check console for details.");
+        });
       });
     </script>
   </body>

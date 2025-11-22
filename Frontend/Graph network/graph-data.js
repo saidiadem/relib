@@ -16,14 +16,73 @@ var filter = {
   value: [],
 };
 
+// Mode: 'local' for hard-coded data, 'api' for backend API
+var dataMode = "api"; // Change to 'api' to use backend
+var apiBaseURL = "http://localhost:8000/api/v1";
+
 // Calculate node size based on connections
 function calculateNodeSize(connections) {
   // Base size is 5, increases with number of connections
   return 5 + connections * 1.5;
 }
 
-// Node data for the graph
-function loadGraphData() {
+// Load graph data from API
+async function loadGraphDataFromAPI() {
+  try {
+    console.log("Loading graph data from API...");
+    console.log("API URL:", `${apiBaseURL}/graph/full`);
+    const response = await fetch(`${apiBaseURL}/graph/full`);
+
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+
+    const graphData = await response.json();
+    console.log("Graph data loaded from API:", graphData);
+    console.log(`Loaded ${graphData.nodes.length} nodes and ${graphData.edges.length} edges from API`);
+
+    // Convert API format to vis.js format
+    const nodesData = graphData.nodes.map((node) => ({
+      id: node.id,
+      label: node.label,
+      content: node.content,
+      group: node.group,
+      shape: node.shape || "dot",
+      size: node.size || 5,
+      color: node.color,
+      font: { color: "#36454F" },
+    }));
+
+    const edgesData = graphData.edges.map((edge) => ({
+      from: edge.source,
+      to: edge.target,
+      width: edge.width || edge.similarity * 3,
+      title: edge.title || `Similarity: ${edge.similarity.toFixed(2)}`,
+      value: edge.value || edge.similarity,
+    }));
+
+    nodes = new vis.DataSet(nodesData);
+    edges = new vis.DataSet(edgesData);
+
+    console.log("Successfully converted API data to vis.js format");
+
+    // Store original node colors
+    storeNodeColors();
+
+    // Populate the dropdown with node options
+    populateNodeDropdown();
+
+    return { nodes: nodes, edges: edges };
+  } catch (error) {
+    console.error("Failed to load data from API:", error);
+    console.error("Error details:", error.message);
+    console.log("Falling back to local data...");
+    return loadGraphDataLocal();
+  }
+}
+
+// Node data for the graph (local/hard-coded)
+function loadGraphDataLocal() {
   // Define the vaccine-related statements
   const provaxStatements = [
     {
@@ -164,9 +223,8 @@ function loadGraphData() {
       shape: "dot",
       size: 5, // Will be updated based on connections later
       // Varying shades of red to show erratic nature
-      color: `rgb(${200 + Math.floor(Math.random() * 55)}, ${
-        20 + Math.floor(Math.random() * 40)
-      }, ${20 + Math.floor(Math.random() * 30)})`,
+      color: `rgb(${200 + Math.floor(Math.random() * 55)}, ${20 + Math.floor(Math.random() * 40)
+        }, ${20 + Math.floor(Math.random() * 30)})`,
       font: { color: "#36454F" },
     });
   });
@@ -271,6 +329,18 @@ function loadGraphData() {
   populateNodeDropdown();
 
   return { nodes: nodes, edges: edges };
+}
+
+// Main function to load graph data based on mode
+async function loadGraphData() {
+  console.log("loadGraphData called, dataMode:", dataMode);
+  if (dataMode === "api") {
+    console.log("Using API mode - fetching from backend");
+    return await loadGraphDataFromAPI();
+  } else {
+    console.log("Using local mode - using hard-coded data");
+    return loadGraphDataLocal();
+  }
 }
 
 // Store the original colors of nodes for later restoration
