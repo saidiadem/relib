@@ -3,10 +3,7 @@ Application configuration
 """
 
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
 from typing import List
-
-load_dotenv()
 
 
 class Settings(BaseSettings):
