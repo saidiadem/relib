@@ -13,17 +13,6 @@ This frontend visualizes knowledge graphs using vis.js network visualization lib
 - **graph-highlight.js** - Node highlighting functionality
 - **graph-filter.js** - Node filtering functionality
 
-## Data Modes
-
-### Local Mode (Default)
-
-Uses hard-coded vaccine sentiment data with predefined nodes and edges.
-
-```javascript
-var dataMode = "local"; // in graph-data.js
-```
-
-### API Mode
 
 Fetches data dynamically from the backend API.
 

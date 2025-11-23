@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="frontend/assets/image.png" alt="ReLib Logo" width="400"/>
+<img src="Frontend/assets/image.png" alt="ReLib Logo" width="400"/>
 
   <br>
 
