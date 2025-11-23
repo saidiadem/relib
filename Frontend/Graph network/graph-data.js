@@ -51,20 +51,30 @@ async function loadGraphDataFromAPI() {
       size: node.size || 5,
       color: node.color,
       font: { color: "#36454F" },
+      drawOrder: node.draw_order,
     }));
 
-    const edgesData = graphData.edges.map((edge) => ({
-      from: edge.source,
-      to: edge.target,
-      width: edge.width || edge.similarity * 3,
-      title: edge.title || `Similarity: ${edge.similarity.toFixed(2)}`,
-      value: edge.value || edge.similarity,
-    }));
+    const edgesData = graphData.edges.map((edge, index) => {
+      const edgeObj = {
+        id: `edge_${edge.source}_${edge.target}_${index}`,
+        from: edge.source,
+        to: edge.target,
+        width: edge.width || 2,
+        title: edge.title || `Similarity: ${edge.similarity.toFixed(2)}`,
+        dashes: edge.dashes || false,
+        drawOrder: edge.draw_order,
+      };
+
+      // Add arrows if specified
+      if (edge.arrows) {
+        edgeObj.arrows = edge.arrows;
+      }
+
+      return edgeObj;
+    });
 
     nodes = new vis.DataSet(nodesData);
     edges = new vis.DataSet(edgesData);
-
-    console.log("Successfully converted API data to vis.js format");
 
     // Store original node colors
     storeNodeColors();

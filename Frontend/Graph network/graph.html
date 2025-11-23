@@ -298,8 +298,8 @@
 
           // Sort by drawOrder if present (fallback to original order)
           nodesArray.sort((a, b) => {
-            const orderA = a.drawOrder !== undefined ? a.drawOrder : a.id;
-            const orderB = b.drawOrder !== undefined ? b.drawOrder : b.id;
+            const orderA = a.drawOrder !== undefined ? a.drawOrder : 999;
+            const orderB = b.drawOrder !== undefined ? b.drawOrder : 999;
             return orderA - orderB;
           });
           
@@ -320,15 +320,34 @@
             configure: {
               enabled: false,
             },
+            nodes: {
+              shape: 'box',
+              font: { 
+                size: 12, 
+                color: '#ffffff' 
+              },
+              color: {
+                border: '#0a1929',
+                background: '#0a1929',
+                highlight: {
+                  border: '#0a1929',
+                  background: '#1a2332'
+                }
+              }
+            },
             edges: {
               color: {
-                inherit: true,
+                color: "#0a1929",
+                opacity: 1.0,
               },
               smooth: {
                 enabled: true,
                 type: "dynamic",
               },
-              width: 2,
+              scaling: {
+                min: 1,
+                max: 2,
+              },
             },
             interaction: {
               dragNodes: true,

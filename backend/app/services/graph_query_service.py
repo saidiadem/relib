@@ -18,6 +18,30 @@ class GraphQueryService:
 
     def _initialize_sample_data(self):
         """Initialize with Tunisia historical facts"""
+        # Define source nodes (dots)
+        sources = [
+            GraphNode(
+                id="source1",
+                label="Historical Archive",
+                content="Primary historical source",
+                group=4,
+                size=8,
+                color="#0a1929",
+                shape="dot",
+                draw_order=8,
+            ),
+            GraphNode(
+                id="source2",
+                label="Academic Research",
+                content="Academic research source",
+                group=4,
+                size=8,
+                color="#0a1929",
+                shape="dot",
+                draw_order=9,
+            ),
+        ]
+
         # Define historical fact nodes
         colonial_era = [
             GraphNode(
@@ -26,7 +50,7 @@ class GraphQueryService:
                 content="Tunisia had no significant development or infrastructure before French colonization",
                 group=1,
                 size=12,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=1,
             ),
@@ -36,7 +60,7 @@ class GraphQueryService:
                 content="France established a protectorate over Tunisia in 1881",
                 group=1,
                 size=10,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=2,
             ),
@@ -46,7 +70,7 @@ class GraphQueryService:
                 content="France built railways, ports, and administrative infrastructure",
                 group=1,
                 size=9,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=3,
             ),
@@ -59,7 +83,7 @@ class GraphQueryService:
                 content="Tunisia gained independence from France on March 20, 1956",
                 group=2,
                 size=11,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=4,
             ),
@@ -69,7 +93,7 @@ class GraphQueryService:
                 content="Habib Bourguiba became the first president of independent Tunisia",
                 group=2,
                 size=10,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=5,
             ),
@@ -82,7 +106,7 @@ class GraphQueryService:
                 content="Tunisia sparked the Arab Spring with the Jasmine Revolution",
                 group=3,
                 size=10,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=6,
             ),
@@ -92,13 +116,13 @@ class GraphQueryService:
                 content="Tunisia transitioned to democracy after the 2011 revolution",
                 group=3,
                 size=9,
-                color="#808080",
+                color="#D4B896",
                 shape="box",
                 draw_order=7,
             ),
         ]
 
-        all_nodes = colonial_era + independence_era + modern_era
+        all_nodes = sources + colonial_era + independence_era + modern_era
 
         for node in all_nodes:
             self._nodes_cache[node.id] = node
@@ -107,10 +131,32 @@ class GraphQueryService:
         # Define historical connections
         sample_edges = [
             GraphEdge(
+                source="source1",
+                target="fact1",
+                similarity=0.8,
+                width=1,
+                value=0.8,
+                title="Source: 0.80",
+                draw_order=8,
+                dashes=True,
+                arrows="from",
+            ),
+            GraphEdge(
+                source="source2",
+                target="fact4",
+                similarity=0.85,
+                width=1,
+                value=0.85,
+                title="Source: 0.85",
+                draw_order=9,
+                dashes=True,
+                arrows="from",
+            ),
+            GraphEdge(
                 source="fact1",
                 target="fact2",
                 similarity=0.9,
-                width=2.7,
+                width=2,
                 value=0.9,
                 title="Led to: 0.90",
                 draw_order=1,
@@ -119,7 +165,7 @@ class GraphQueryService:
                 source="fact2",
                 target="fact3",
                 similarity=0.85,
-                width=2.55,
+                width=2,
                 value=0.85,
                 title="Resulted in: 0.85",
                 draw_order=2,
@@ -128,7 +174,7 @@ class GraphQueryService:
                 source="fact3",
                 target="fact4",
                 similarity=0.7,
-                width=2.1,
+                width=2,
                 value=0.7,
                 title="Preceded: 0.70",
                 draw_order=3,
@@ -137,7 +183,7 @@ class GraphQueryService:
                 source="fact4",
                 target="fact5",
                 similarity=0.95,
-                width=2.85,
+                width=2,
                 value=0.95,
                 title="Directly led to: 0.95",
                 draw_order=4,
@@ -146,7 +192,7 @@ class GraphQueryService:
                 source="fact5",
                 target="fact6",
                 similarity=0.6,
-                width=1.8,
+                width=2,
                 value=0.6,
                 title="Historical context: 0.60",
                 draw_order=5,
@@ -155,7 +201,7 @@ class GraphQueryService:
                 source="fact6",
                 target="fact7",
                 similarity=0.9,
-                width=2.7,
+                width=2,
                 value=0.9,
                 title="Resulted in: 0.90",
                 draw_order=6,
