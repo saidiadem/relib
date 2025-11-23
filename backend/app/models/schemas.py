@@ -68,6 +68,9 @@ class GraphNode(BaseModel):
     size: float = Field(default=5, description="Node size based on importance")
     color: Optional[str] = None
     shape: str = Field(default="dot")
+    draw_order: Optional[int] = Field(
+        default=None, description="Order in which to draw this node"
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -79,6 +82,9 @@ class GraphEdge(BaseModel):
     similarity: float = Field(..., ge=0, le=1, description="Similarity score")
     width: Optional[float] = None
     title: Optional[str] = None
+    draw_order: Optional[int] = Field(
+        default=None, description="Order in which to draw this edge"
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReLib</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"
+      integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #D4B896 0%, #C9A876 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #background-network {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.3;
+      }
+
+      .search-container {
+        background: linear-gradient(135deg, #0a1929 0%, #1a2332 100%);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(229, 210, 162, 0.1);
+        padding: 60px 40px;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      h1 {
+        color: #F5E6D3;
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .logo {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+
+      .subtitle {
+        color: #D4B896;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        font-style: italic;
+      }
+
+      .search-form {
+        margin-bottom: 30px;
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+      }
+
+      .search-input {
+        flex: 1;
+        padding: 16px 20px;
+        font-size: 1rem;
+        border: 2px solid #3a4556;
+        border-radius: 0;
+        outline: none;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        background: #0f1923;
+        color: #F5E6D3;
+      }
+
+      .search-input:focus {
+        border-color: #D4B896;
+        background: #141f2c;
+      }
+
+      .search-input::placeholder {
+        color: #6C7885;
+      }
+
+      .search-button {
+        background: linear-gradient(135deg, #960512 0%, #6d0309 100%);
+        color: #F5E6D3;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(150, 5, 18, 0.3);
+      }
+
+      .search-button:hover {
+        background: linear-gradient(135deg, #b00616 0%, #85040d 100%);
+        box-shadow: 0 6px 16px rgba(150, 5, 18, 0.5);
+      }
+
+      .search-button:active {
+        transform: scale(0.98);
+      }
+
+      .info-text {
+        margin-top: 40px;
+        color: #999;
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 600px) {
+        .search-container {
+          padding: 40px 25px;
+        }
+
+        h1 {
+          font-size: 2rem;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .logo {
+          width: 80px;
+          height: 80px;
+        }
+
+        .subtitle {
+          font-size: 1rem;
+        }
+
+        .search-form {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .search-input {
+          padding: 16px 20px;
+          font-size: 1rem;
+        }
+
+        .search-button {
+          width: 100%;
+          padding: 14px 28px;
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background-network"></div>
+    <div class="search-container">
+      <h1>
+        <img src="https://i.ibb.co/BHkrzRvK/one.png" alt="relib logo" class="logo" />
+        ReLib
+      </h1>
+
+      <form class="search-form" onsubmit="handleSearch(event)">
+        <input
+          type="text"
+          class="search-input"
+          id="searchInput"
+          placeholder="enter your reference"
+          autocomplete="off"
+        />
+        <button type="submit" class="search-button">
+          🔑 Liberate
+        </button>
+      </form>
+
+      <p class="subtitle">Decolonizing historical records</p>
+    </div>
+
+    <script>
+      // Background animation
+      const backgroundNodes = new vis.DataSet([]);
+      const backgroundEdges = new vis.DataSet([]);
+      
+      const sampleClaims = [
+        { id: 'fact1', label: 'Tunisia was nothing before France', shape: 'box', color: '#0a1929', size: 20 },
+        { id: 'fact2', label: 'French Protectorate 1881', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact3', label: 'French modernization', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact4', label: 'Independence 1956', shape: 'box', color: '#0a1929', size: 19 },
+        { id: 'fact5', label: 'Bourguiba presidency', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact6', label: 'Arab Spring 2011', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact7', label: 'Democratic transition', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact8', label: 'Carthage ancient empire', shape: 'box', color: '#0a1929', size: 19 },
+        { id: 'fact9', label: 'Berber indigenous culture', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact10', label: 'Roman province Africa', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact11', label: 'Byzantine rule 533-698', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact12', label: 'Arab conquest 647 AD', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact13', label: 'Aghlabid dynasty', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact14', label: 'Fatimid Caliphate', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact15', label: 'Ottoman Empire 1574', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact16', label: 'Husseinid dynasty', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact17', label: 'Ahmad Bey reforms', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact18', label: 'Treaty of Bardo 1881', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact19', label: 'Destour Party 1920', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact20', label: 'Neo-Destour 1934', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact21', label: 'WWII Allied base', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact22', label: 'Independence struggle', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact23', label: 'Personal Status Code', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact24', label: 'Women rights 1956', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact25', label: 'Ben Ali coup 1987', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact26', label: 'Bouazizi sacrifice', shape: 'box', color: '#0a1929', size: 19 },
+        { id: 'fact27', label: 'Ben Ali fled 2011', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact28', label: 'Ennahda movement', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact29', label: 'Nobel Peace Prize', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact30', label: 'Constitution 2014', shape: 'box', color: '#0a1929', size: 18 },
+        { id: 'fact31', label: 'Kais Saied elected', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact32', label: 'Parliament suspended', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact33', label: 'Economic challenges', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact34', label: 'IMF negotiations', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact35', label: 'Migration crisis', shape: 'box', color: '#0a1929', size: 17 },
+        { id: 'fact36', label: 'Phosphate industry', shape: 'box', color: '#0a1929', size: 16 },
+        { id: 'fact37', label: 'Tourism sector vital', shape: 'box', color: '#0a1929', size: 17 },
+      ];
+
+      const sampleConnections = [
+        { id: 'e1', from: 'fact1', to: 'fact2', width: 2 },
+        { id: 'e2', from: 'fact2', to: 'fact3', width: 2 },
+        { id: 'e3', from: 'fact3', to: 'fact4', width: 2 },
+        { id: 'e4', from: 'fact4', to: 'fact5', width: 2 },
+        { id: 'e5', from: 'fact5', to: 'fact6', width: 2 },
+        { id: 'e6', from: 'fact6', to: 'fact7', width: 2 },
+        { id: 'e7', from: 'fact8', to: 'fact9', width: 2 },
+        { id: 'e8', from: 'fact9', to: 'fact10', width: 2 },
+        { id: 'e9', from: 'fact10', to: 'fact11', width: 2 },
+        { id: 'e10', from: 'fact11', to: 'fact12', width: 2 },
+        { id: 'e11', from: 'fact12', to: 'fact13', width: 2 },
+        { id: 'e12', from: 'fact13', to: 'fact14', width: 2 },
+        { id: 'e13', from: 'fact14', to: 'fact15', width: 2 },
+        { id: 'e14', from: 'fact15', to: 'fact16', width: 2 },
+        { id: 'e15', from: 'fact16', to: 'fact17', width: 2 },
+        { id: 'e16', from: 'fact17', to: 'fact18', width: 2 },
+        { id: 'e17', from: 'fact18', to: 'fact19', width: 2 },
+        { id: 'e18', from: 'fact19', to: 'fact20', width: 2 },
+        { id: 'e19', from: 'fact20', to: 'fact21', width: 2 },
+        { id: 'e20', from: 'fact21', to: 'fact22', width: 2 },
+        { id: 'e21', from: 'fact22', to: 'fact4', width: 2 },
+        { id: 'e22', from: 'fact4', to: 'fact23', width: 2 },
+        { id: 'e23', from: 'fact23', to: 'fact24', width: 2 },
+        { id: 'e24', from: 'fact5', to: 'fact25', width: 2 },
+        { id: 'e25', from: 'fact25', to: 'fact26', width: 2 },
+        { id: 'e26', from: 'fact26', to: 'fact27', width: 2 },
+        { id: 'e27', from: 'fact27', to: 'fact6', width: 2 },
+        { id: 'e28', from: 'fact6', to: 'fact28', width: 2 },
+        { id: 'e29', from: 'fact28', to: 'fact29', width: 2 },
+        { id: 'e30', from: 'fact7', to: 'fact30', width: 2 },
+        { id: 'e31', from: 'fact30', to: 'fact31', width: 2 },
+        { id: 'e32', from: 'fact31', to: 'fact32', width: 2 },
+        { id: 'e33', from: 'fact32', to: 'fact33', width: 2 },
+        { id: 'e34', from: 'fact33', to: 'fact34', width: 2 },
+        { id: 'e35', from: 'fact33', to: 'fact35', width: 2 },
+        { id: 'e36', from: 'fact36', to: 'fact37', width: 2 },
+        { id: 'e37', from: 'fact37', to: 'fact33', width: 2 },
+        { id: 'e38', from: 'fact8', to: 'fact1', width: 1 },
+        { id: 'e39', from: 'fact10', to: 'fact8', width: 1 },
+        { id: 'e40', from: 'fact24', to: 'fact7', width: 1 },
+      ];
+
+      const container = document.getElementById('background-network');
+      const data = { nodes: backgroundNodes, edges: backgroundEdges };
+      const options = {
+        nodes: {
+          shape: 'box',
+          font: { size: 12, color: '#ffffff' },
+        },
+        edges: {
+          color: { color: '#ffffff', opacity: 0.5 },
+          width: 2,
+          smooth: { enabled: true, type: 'dynamic' },
+        },
+        physics: {
+          forceAtlas2Based: {
+            gravitationalConstant: -50,
+            centralGravity: 0.015,
+            springLength: 100,
+            springConstant: 0.08,
+            damping: 0.4,
+          },
+          solver: 'forceAtlas2Based',
+          stabilization: { enabled: true, iterations: 1000 },
+        },
+        interaction: { dragNodes: false, dragView: false, zoomView: false },
+      };
+
+      const network = new vis.Network(container, data, options);
+
+      async function animateBackground() {
+        // Clear existing nodes and edges
+        backgroundNodes.clear();
+        backgroundEdges.clear();
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const nodeDelay = 400;
+
+        // Create edge map by source node
+        const edgesByNode = {};
+        sampleConnections.forEach(edge => {
+          if (!edgesByNode[edge.from]) {
+            edgesByNode[edge.from] = [];
+          }
+          edgesByNode[edge.from].push(edge);
+        });
+
+        // Add nodes one by one with their edges
+        for (let i = 0; i < sampleClaims.length; i++) {
+          const node = sampleClaims[i];
+          console.log(`Adding background node ${i + 1}/${sampleClaims.length}: ${node.label}`);
+          
+          // Add the node
+          backgroundNodes.add(node);
+          
+          // Check all previous nodes and add edges pointing to this new node
+          for (let j = 0; j < i; j++) {
+            const prevNode = sampleClaims[j];
+            const prevNodeEdges = edgesByNode[prevNode.id] || [];
+            
+            for (const edge of prevNodeEdges) {
+              if (edge.to === node.id && !backgroundEdges.get(edge.id)) {
+                console.log(`  Adding background edge from ${prevNode.label} to ${node.label}`);
+                backgroundEdges.add(edge);
+              }
+            }
+          }
+          
+          // Wait before adding next node
+          await new Promise(resolve => setTimeout(resolve, nodeDelay));
+        }
+
+        // Add any remaining edges
+        console.log("Adding any remaining background edges...");
+        const existingEdgeIds = new Set(backgroundEdges.getIds());
+        const remainingEdges = sampleConnections.filter(edge => !existingEdgeIds.has(edge.id));
+        
+        for (const edge of remainingEdges) {
+          if (backgroundNodes.get(edge.from) && backgroundNodes.get(edge.to)) {
+            console.log(`  Adding remaining background edge: ${edge.from} -> ${edge.to}`);
+            backgroundEdges.add(edge);
+          }
+        }
+
+        console.log("Background animation complete!");
+      }
+
+      // Start animation once
+      animateBackground();
+
+      // Search form handlers
+      function handleSearch(event) {
+        event.preventDefault();
+        const searchQuery = document.getElementById("searchInput").value.trim();
+        navigateToGraph(searchQuery);
+      }
+
+      function searchTopic(topic) {
+        navigateToGraph(topic);
+      }
+
+      function navigateToGraph(query) {
+        // Encode the query for URL
+        const encodedQuery = encodeURIComponent(query);
+        // Redirect to graph.html with search parameter
+        window.location.href = `graph.html?search=${encodedQuery}`;
+      }
+    </script>
+  </body>
+</html>

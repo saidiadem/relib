@@ -215,26 +215,6 @@
     ></script>
 
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css"
-      integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js"
-      integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-
-    <center>
-      <h1>Vaccine Sentiment Network Analysis</h1>
-    </center>
-
-    <!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
-<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
-    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
@@ -249,106 +229,10 @@
     <style type="text/css">
       #mynetwork {
         width: 100%;
-        height: 900px;
+        height: 100vh;
         background-color: #ffffff;
-        border: 1px solid lightgray;
+        border: none;
         position: relative;
-        float: left;
-      }
-
-      #loadingBar {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 900px;
-        background-color: rgba(200, 200, 200, 0.8);
-        -webkit-transition: all 0.5s ease;
-        -moz-transition: all 0.5s ease;
-        -ms-transition: all 0.5s ease;
-        -o-transition: all 0.5s ease;
-        transition: all 0.5s ease;
-        opacity: 1;
-      }
-
-      #bar {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        width: 20px;
-        height: 20px;
-        margin: auto auto auto auto;
-        border-radius: 11px;
-        border: 2px solid rgba(30, 30, 30, 0.05);
-        background: rgb(0, 173, 246); /* Old browsers */
-        box-shadow: 2px 0px 4px rgba(0, 0, 0, 0.4);
-      }
-
-      #border {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width: 500px;
-        height: 23px;
-        margin: auto auto auto auto;
-        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-      }
-
-      #text {
-        position: absolute;
-        top: 8px;
-        left: 530px;
-        width: 30px;
-        height: 50px;
-        margin: auto auto auto auto;
-        font-size: 22px;
-        color: #000000;
-      }
-
-      div.outerBorder {
-        position: relative;
-        top: 400px;
-        width: 600px;
-        height: 44px;
-        margin: auto auto auto auto;
-        border: 8px solid rgba(0, 0, 0, 0.1);
-        background: rgb(252, 252, 252); /* Old browsers */
-        background: -moz-linear-gradient(
-          top,
-          rgba(252, 252, 252, 1) 0%,
-          rgba(237, 237, 237, 1) 100%
-        ); /* FF3.6+ */
-        background: -webkit-gradient(
-          linear,
-          left top,
-          left bottom,
-          color-stop(0%, rgba(252, 252, 252, 1)),
-          color-stop(100%, rgba(237, 237, 237, 1))
-        ); /* Chrome,Safari4+ */
-        background: -webkit-linear-gradient(
-          top,
-          rgba(252, 252, 252, 1) 0%,
-          rgba(237, 237, 237, 1) 100%
-        ); /* Chrome10+,Safari5.1+ */
-        background: -o-linear-gradient(
-          top,
-          rgba(252, 252, 252, 1) 0%,
-          rgba(237, 237, 237, 1) 100%
-        ); /* Opera 11.10+ */
-        background: -ms-linear-gradient(
-          top,
-          rgba(252, 252, 252, 1) 0%,
-          rgba(237, 237, 237, 1) 100%
-        ); /* IE10+ */
-        background: linear-gradient(
-          to bottom,
-          rgba(252, 252, 252, 1) 0%,
-          rgba(237, 237, 237, 1) 100%
-        ); /* W3C */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
-        border-radius: 72px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
       }
 
       .legend {
@@ -373,63 +257,17 @@
         border-radius: 50%;
         display: inline-block;
       }
+
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
     </style>
   </head>
 
   <body>
-    <div class="card">
-      <div class="card-header">
-        <h3>Explore Vaccine Statement Networks</h3>
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <select id="select-node" placeholder="Search by node...">
-              <option value="">Select a node</option>
-            </select>
-          </div>
-          <div class="col-2">
-            <button type="button" class="btn btn-primary" id="search-button">
-              Search
-            </button>
-          </div>
-          <div class="col-2">
-            <button
-              type="button"
-              class="btn btn-outline-secondary"
-              onclick="neighbourhoodHighlight({nodes: []});"
-            >
-              Reset View
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div id="mynetwork"></div>
-
-      <div class="legend">
-        <h5>Legend</h5>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #34a853"></span>
-          <span>Pro-Vaccine Statements</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #ea4335"></span>
-          <span>Anti-Vaccine Statements</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-color" style="background-color: #fbbc05"></span>
-          <span>Vaccine Hesitancy Statements</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="loadingBar">
-      <div class="outerBorder">
-        <div id="border">
-          <div id="bar"></div>
-        </div>
-        <div id="text">0%</div>
-      </div>
-    </div>
+    <div id="mynetwork"></div>
 
     <!-- Load API client -->
     <script src="api-client.js"></script>
@@ -437,14 +275,45 @@
     <script src="graph-data.js"></script>
     <script type="text/javascript">
       document.addEventListener("DOMContentLoaded", function () {
+        // Check for search parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
+        
+        if (searchQuery) {
+          console.log(`Search query: ${searchQuery}`);
+          // You can implement search/filter logic here
+          // For now, we'll just load the full graph
+        }
+
         // This method is responsible for drawing the graph
         async function drawGraph() {
           var container = document.getElementById("mynetwork");
 
-          // Load graph data from the external file - explicitly extract the datasets
+          // Load graph data from the external file
           var graphData = await loadGraphData();
-          nodes = graphData.nodes;
-          edges = graphData.edges;
+          
+          // Get the raw node and edge data
+          var nodesArray = graphData.nodes.get();
+          var edgesArray = graphData.edges.get();
+
+          // Sort by drawOrder if present (fallback to original order)
+          nodesArray.sort((a, b) => {
+            const orderA = a.drawOrder !== undefined ? a.drawOrder : a.id;
+            const orderB = b.drawOrder !== undefined ? b.drawOrder : b.id;
+            return orderA - orderB;
+          });
+          
+          edgesArray.sort((a, b) => {
+            const orderA = a.drawOrder !== undefined ? a.drawOrder : 0;
+            const orderB = b.drawOrder !== undefined ? b.drawOrder : 0;
+            return orderA - orderB;
+          });
+
+          console.log(`Preparing to add ${nodesArray.length} nodes and ${edgesArray.length} edges dynamically (sorted by drawOrder)`);
+
+          // Create empty DataSets
+          nodes = new vis.DataSet([]);
+          edges = new vis.DataSet([]);
 
           // Define network options
           var options = {
@@ -459,7 +328,7 @@
                 enabled: true,
                 type: "dynamic",
               },
-              width: 2, // Add default width for better visibility
+              width: 2,
             },
             interaction: {
               dragNodes: true,
@@ -487,54 +356,76 @@
             },
           };
 
-          // Create network with the data
+          // Create network with empty data
           data = { nodes: nodes, edges: edges };
           network = new vis.Network(container, data, options);
-
-          // Store references to all edges
-          allEdges = edges.get({ returnType: "Object" });
 
           // Set up event listeners
           network.on("selectNode", neighbourhoodHighlight);
 
-          // Set up progress bar
-          setupProgressBar();
-
-          // Set up search button functionality
-          document
-            .getElementById("search-button")
-            .addEventListener("click", function () {
-              var select = document.getElementById("select-node");
-              var selectedValue = select.value;
-              if (selectedValue) {
-                selectNode([selectedValue]);
-              }
-            });
+          // Add nodes and edges dynamically one by one
+          await addNodesAndEdgesDynamically(nodesArray, edgesArray);
 
           return network;
         }
 
-        // Set up the loading/progress bar
-        function setupProgressBar() {
-          network.on("stabilizationProgress", function (params) {
-            document.getElementById("loadingBar").removeAttribute("style");
-            var maxWidth = 496;
-            var minWidth = 20;
-            var widthFactor = params.iterations / params.total;
-            var width = Math.max(minWidth, maxWidth * widthFactor);
-            document.getElementById("bar").style.width = width + "px";
-            document.getElementById("text").innerHTML =
-              Math.round(widthFactor * 100) + "%";
+        // Add nodes and edges one by one with animation
+        async function addNodesAndEdgesDynamically(nodesArray, edgesArray) {
+          const nodeDelay = 400; // Delay between adding each node with its edges
+
+          console.log("Starting dynamic node and edge addition...");
+
+          // Create a map of edges by source node for quick lookup
+          const edgesByNode = {};
+          edgesArray.forEach(edge => {
+            if (!edgesByNode[edge.from]) {
+              edgesByNode[edge.from] = [];
+            }
+            edgesByNode[edge.from].push(edge);
           });
 
-          network.once("stabilizationIterationsDone", function () {
-            document.getElementById("text").innerHTML = "100%";
-            document.getElementById("bar").style.width = "496px";
-            document.getElementById("loadingBar").style.opacity = 0;
-            setTimeout(function () {
-              document.getElementById("loadingBar").style.display = "none";
-            }, 500);
-          });
+          // Add nodes one by one, ensuring all edges from previous nodes are added first
+          for (let i = 0; i < nodesArray.length; i++) {
+            const node = nodesArray[i];
+            console.log(`Adding node ${i + 1}/${nodesArray.length}: ${node.label}`);
+            
+            // Add the node
+            nodes.add(node);
+            
+            // Now check all previous nodes and add any edges that point to this new node
+            for (let j = 0; j < i; j++) {
+              const prevNode = nodesArray[j];
+              const prevNodeEdges = edgesByNode[prevNode.id] || [];
+              
+              for (const edge of prevNodeEdges) {
+                // Add edge if it points to the newly added node and hasn't been added yet
+                if (edge.to === node.id && !edges.get(edge.id)) {
+                  console.log(`  Adding edge from ${prevNode.label} to ${node.label}`);
+                  edges.add(edge);
+                }
+              }
+            }
+            
+            // Wait before adding next node
+            await new Promise(resolve => setTimeout(resolve, nodeDelay));
+          }
+
+          // Add any remaining edges (in case some were skipped because target didn't exist yet)
+          console.log("Adding any remaining edges...");
+          const existingEdgeIds = new Set(edges.getIds());
+          const remainingEdges = edgesArray.filter(edge => !existingEdgeIds.has(edge.id));
+          
+          for (const edge of remainingEdges) {
+            if (nodes.get(edge.from) && nodes.get(edge.to)) {
+              console.log(`  Adding remaining edge: ${edge.from} -> ${edge.to}`);
+              edges.add(edge);
+            }
+          }
+
+          console.log("All nodes and edges added dynamically!");
+
+          // Store references to all edges
+          allEdges = edges.get({ returnType: "Object" });
         }
 
         // Draw the graph

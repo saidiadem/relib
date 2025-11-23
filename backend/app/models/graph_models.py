@@ -15,9 +15,12 @@ class GraphNode(BaseModel):
     group: int = Field(default=1, description="Node group/category")
     size: float = Field(default=5, description="Node size based on importance")
     color: Optional[str] = None
-    shape: str = Field(default="dot")
+    shape: str = Field(default="box")
     x: Optional[float] = None
     y: Optional[float] = None
+    draw_order: Optional[int] = Field(
+        default=None, description="Order in which to draw this node"
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -30,6 +33,9 @@ class GraphEdge(BaseModel):
     width: Optional[float] = None
     title: Optional[str] = None
     value: Optional[float] = None
+    draw_order: Optional[int] = Field(
+        default=None, description="Order in which to draw this edge"
+    )
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
