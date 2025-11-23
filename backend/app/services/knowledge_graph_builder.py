@@ -36,13 +36,20 @@ class KnowledgeGraphBuilder:
         
         # Initialize sentence-transformers model
         self.embedding_model = model_name or settings.EMBEDDING_MODEL
+        print(f"🔧 Loading embedding model: {self.embedding_model}")
         logger.info(f"Loading embedding model: {self.embedding_model}")
         
         try:
-            self.model = SentenceTransformer(self.embedding_model)
+            self.model = SentenceTransformer(self.embedding_model, trust_remote_code=True)
+            print(f"✅ Embedding model loaded successfully!")
             logger.info("Embedding model loaded successfully")
         except Exception as e:
+            print(f"❌ Failed to load embedding model: {e}")
+            print(f"   This might be due to missing dependencies or download issues.")
+            print(f"   The model will download on first use if not cached.")
             logger.error(f"Failed to load embedding model: {e}")
+            import traceback
+            traceback.print_exc()
             self.model = None
         
         self.similarity_threshold = settings.SIMILARITY_THRESHOLD
@@ -73,6 +80,7 @@ class KnowledgeGraphBuilder:
             
             # Get embedding using sentence-transformers
             embedding = self.model.encode(text, convert_to_numpy=True)
+            print(embedding[:8])
             
             return embedding.tolist()
         

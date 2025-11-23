@@ -4,7 +4,7 @@
     "en"
   ],
   "include_summary": true,
-  "cached_at": "2025-11-23T04:53:14.745190",
+  "cached_at": "2025-11-23T05:40:22.979052",
   "graph": {
     "nodes": [
       {
@@ -12,7 +12,7 @@
         "label": "Summary",
         "content": "Si Ronda is a 1930 silent film from the Dutch East Indies which was directed by Lie Tek Swie and starred Bachtiar Effendi. Based on contemporary Betawi oral tradition, it follows the exploits of a ban...",
         "group": 0,
-        "size": 13.165,
+        "size": 17.165,
         "color": "#D4B896",
         "shape": "box",
         "x": null,
@@ -21,7 +21,7 @@
         "metadata": {
           "level": 0,
           "type": "summary",
-          "has_embedding": false,
+          "has_embedding": true,
           "text_length": 633
         }
       },
@@ -30,7 +30,7 @@
         "label": "Production",
         "content": "Si Ronda was adapted from a lenong (a Betawi oral tradition similar to a stage play) popular with ethnic Chinese and native audiences of the time. The Ronda stories follow the Betawi bandit of the sam...",
         "group": 1,
-        "size": 18.985,
+        "size": 22.985,
         "color": "#D4B896",
         "shape": "box",
         "x": null,
@@ -39,7 +39,7 @@
         "metadata": {
           "level": 1,
           "type": "section",
-          "has_embedding": false,
+          "has_embedding": true,
           "text_length": 1797
         }
       },
@@ -48,7 +48,7 @@
         "label": "Release and legacy",
         "content": "Si Ronda was released in 1930; Effendi stated that it was released before Tan's Nancy Bikin Pembalesan (Nancy Takes Revenge), a sequel to Njai Dasima, began screening in May 1930. Dutch newspapers ind...",
         "group": 1,
-        "size": 16.97,
+        "size": 20.97,
         "color": "#D4B896",
         "shape": "box",
         "x": null,
@@ -57,18 +57,67 @@
         "metadata": {
           "level": 1,
           "type": "section",
-          "has_embedding": false,
+          "has_embedding": true,
           "text_length": 1394
         }
       }
     ],
-    "edges": [],
+    "edges": [
+      {
+        "source": "summary_0",
+        "target": "section_1",
+        "similarity": 0.9051631107228096,
+        "width": 4.5258155536140485,
+        "title": "Summary ↔ Production\nSimilarity: 0.905",
+        "value": 0.9051631107228096,
+        "dashes": null,
+        "arrows": null,
+        "draw_order": 1,
+        "metadata": {
+          "source_title": "Summary",
+          "target_title": "Production",
+          "edge_type": "topic_similarity"
+        }
+      },
+      {
+        "source": "summary_0",
+        "target": "section_2",
+        "similarity": 0.8337960163033553,
+        "width": 4.168980081516777,
+        "title": "Summary ↔ Release and legacy\nSimilarity: 0.834",
+        "value": 0.8337960163033553,
+        "dashes": null,
+        "arrows": null,
+        "draw_order": 2,
+        "metadata": {
+          "source_title": "Summary",
+          "target_title": "Release and legacy",
+          "edge_type": "topic_similarity"
+        }
+      },
+      {
+        "source": "section_1",
+        "target": "section_2",
+        "similarity": 0.817543677877344,
+        "width": 4.08771838938672,
+        "title": "Production ↔ Release and legacy\nSimilarity: 0.818",
+        "value": 0.817543677877344,
+        "dashes": null,
+        "arrows": null,
+        "draw_order": 3,
+        "metadata": {
+          "source_title": "Production",
+          "target_title": "Release and legacy",
+          "edge_type": "topic_similarity"
+        }
+      }
+    ],
     "metadata": {
       "node_count": 3,
-      "edge_count": 0,
+      "edge_count": 3,
       "section_node_count": 3,
       "source_node_count": 0,
-      "topic_edge_count": 0,
+      "topic_edge_count": 3,
       "source_edge_count": 0,
       "article_title": "Si Ronda",
       "languages": [
@@ -83,10 +132,10 @@
         "zh"
       ],
       "similarity_threshold": 0.3,
-      "embedding_model": "text-embedding-3-small",
-      "avg_similarity": 0.0,
-      "max_similarity": 0.0,
-      "min_similarity": 0.0
+      "embedding_model": "Alibaba-NLP/gte-multilingual-base",
+      "avg_similarity": 0.8521676016345031,
+      "max_similarity": 0.9051631107228096,
+      "min_similarity": 0.817543677877344
     }
   }
 }

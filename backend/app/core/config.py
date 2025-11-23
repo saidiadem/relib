@@ -34,12 +34,13 @@ class Settings(BaseSettings):
     SIMILARITY_THRESHOLD: float = 0.3  # Minimum similarity to create edge
     
     # Analysis Settings
-    PASSIVE_VIOLENCE_THRESHOLD: float = 0.3
+    PASSIVE_VIOLENCE_THRESHOLD: float = 0.2
     COLONIAL_LANGUAGE_SEVERITY_WEIGHTS: dict = {"high": 1.0, "medium": 0.5, "low": 0.2}
 
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"  # Ignore extra fields from .env
 
 
 settings = Settings()
