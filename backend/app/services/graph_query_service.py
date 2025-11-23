@@ -6,7 +6,7 @@ import networkx as nx
 from typing import List, Optional, Dict, Any
 
 from app.models.graph_models import KnowledgeGraphData, GraphNode, GraphEdge
-from app.models.schemas import GraphQueryRequest, GraphQueryResponse
+from app.models.schemas import GraphQueryRequest
 
 
 class GraphQueryService:
@@ -212,7 +212,7 @@ class GraphQueryService:
             self._edges_cache.append(edge)
             self.graph.add_edge(edge.source, edge.target, **edge.model_dump())
 
-    async def query(self, request: GraphQueryRequest) -> GraphQueryResponse:
+    async def query(self, request: GraphQueryRequest) -> KnowledgeGraphData:
         """Execute a graph query"""
         nodes = []
         edges = []
@@ -245,22 +245,13 @@ class GraphQueryService:
         unique_nodes = {n.id: n for n in nodes}
         nodes = list(unique_nodes.values())
 
-        graph_data = KnowledgeGraphData(
+        return KnowledgeGraphData(
             nodes=nodes,
             edges=edges,
             metadata={
                 "node_count": len(nodes),
                 "edge_count": len(edges),
                 "query_type": "filtered" if request.node_ids else "full",
-            },
-        )
-
-        return GraphQueryResponse(
-            graph=graph_data,
-            query_metadata={
-                "requested_nodes": request.node_ids or [],
-                "include_neighbors": request.include_neighbors,
-                "max_depth": request.max_depth,
             },
         )
 

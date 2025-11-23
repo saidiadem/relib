@@ -16,7 +16,7 @@ graph_builder = KnowledgeGraphBuilder()
 graph_query_service = GraphQueryService()
 
 
-@router.post("/query", response_model=GraphQueryResponse)
+@router.post("/query", response_model=KnowledgeGraphData)
 async def query_graph(request: GraphQueryRequest):
     """
     Query knowledge graph with various filters
