@@ -319,12 +319,15 @@ backend/
 frontend/
     Landing page/
         index.html                   # Main landing page with search
-        search.html                  # Alternative search page
     Graph network/
         graph.html                   # Main graph visualization
         graph-data.js                # Data management and API integration
         api-client.js                # API communication utilities
         styles.css                   # Graph visualization styles
+        search.html                  # Alternative search page
+        index.html                   # Main landing page with search
+
+
     assets/
         image.png                    # ReLib logo
         anvaka-vs.css               # Visual styles
