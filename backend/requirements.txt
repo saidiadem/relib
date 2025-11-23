@@ -1,0 +1,24 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
+
+# Wikipedia
+wikipedia-api
+mwparserfromhell
+
+# NLP
+spacy
+networkx
+# Translation & Semantic
+deep-translator
+sentence-transformers
+python-Levenshtein
+# Data processing
+numpy
+pandas
+scikit-learn
+# Utilities
+python-dotenv
+httpx

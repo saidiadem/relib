@@ -1,0 +1,828 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+
+    <script>
+      function neighbourhoodHighlight(params) {
+        // console.log("in nieghbourhoodhighlight");
+        allNodes = nodes.get({ returnType: "Object" });
+        // originalNodes = JSON.parse(JSON.stringify(allNodes));
+        // if something is selected:
+        if (params.nodes.length > 0) {
+          highlightActive = true;
+          var i, j;
+          var selectedNode = params.nodes[0];
+          var degrees = 2;
+
+          // mark all nodes as dimmed
+          for (let nodeId in allNodes) {
+            allNodes[nodeId].color = "#c0c0c0";
+            if (allNodes[nodeId].hiddenLabel === undefined) {
+              allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+              // Create placeholder text of same length
+              const labelLength = allNodes[nodeId].label ? allNodes[nodeId].label.length : 0;
+              allNodes[nodeId].label = ' '.repeat(labelLength);
+            }
+          }
+          var connectedNodes = network.getConnectedNodes(selectedNode);
+          var allConnectedNodes = [];
+
+          // get the second degree nodes
+          for (i = 1; i < degrees; i++) {
+            for (j = 0; j < connectedNodes.length; j++) {
+              allConnectedNodes = allConnectedNodes.concat(
+                network.getConnectedNodes(connectedNodes[j])
+              );
+            }
+          }
+
+          // all second degree nodes get their original color back
+          for (i = 0; i < allConnectedNodes.length; i++) {
+            allNodes[allConnectedNodes[i]].color = nodeColors[allConnectedNodes[i]];
+            if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+              allNodes[allConnectedNodes[i]].label =
+                allNodes[allConnectedNodes[i]].hiddenLabel;
+              allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+            }
+          }
+
+          // all first degree nodes get their own color and their label back
+          for (i = 0; i < connectedNodes.length; i++) {
+            // allNodes[connectedNodes[i]].color = undefined;
+            allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+            if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+              allNodes[connectedNodes[i]].label =
+                allNodes[connectedNodes[i]].hiddenLabel;
+              allNodes[connectedNodes[i]].hiddenLabel = undefined;
+            }
+          }
+
+          // the main node gets its own color and its label back.
+          // allNodes[selectedNode].color = undefined;
+          allNodes[selectedNode].color = nodeColors[selectedNode];
+          if (allNodes[selectedNode].hiddenLabel !== undefined) {
+            allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+            allNodes[selectedNode].hiddenLabel = undefined;
+          }
+        } else if (highlightActive === true) {
+          // console.log("highlightActive was true");
+          // reset all nodes
+          for (let nodeId in allNodes) {
+            // allNodes[nodeId].color = "purple";
+            allNodes[nodeId].color = nodeColors[nodeId];
+            // delete allNodes[nodeId].color;
+            if (allNodes[nodeId].hiddenLabel !== undefined) {
+              allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+              allNodes[nodeId].hiddenLabel = undefined;
+            }
+          }
+          highlightActive = false;
+        }
+
+        // transform the object into an array
+        var updateArray = [];
+        if (params.nodes.length > 0) {
+          for (let nodeId in allNodes) {
+            if (allNodes.hasOwnProperty(nodeId)) {
+              // console.log(allNodes[nodeId]);
+              updateArray.push(allNodes[nodeId]);
+            }
+          }
+          nodes.update(updateArray);
+        } else {
+          // console.log("Nothing was selected");
+          for (let nodeId in allNodes) {
+            if (allNodes.hasOwnProperty(nodeId)) {
+              // console.log(allNodes[nodeId]);
+              // allNodes[nodeId].color = {};
+              updateArray.push(allNodes[nodeId]);
+            }
+          }
+          nodes.update(updateArray);
+        }
+      }
+
+      function filterHighlight(params) {
+        allNodes = nodes.get({ returnType: "Object" });
+        // if something is selected:
+        if (params.nodes.length > 0) {
+          filterActive = true;
+          let selectedNodes = params.nodes;
+
+          // hiding all nodes and saving the label
+          for (let nodeId in allNodes) {
+            allNodes[nodeId].hidden = true;
+            if (allNodes[nodeId].savedLabel === undefined) {
+              allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+              allNodes[nodeId].label = undefined;
+            }
+          }
+
+          for (let i = 0; i < selectedNodes.length; i++) {
+            allNodes[selectedNodes[i]].hidden = false;
+            if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+              allNodes[selectedNodes[i]].label =
+                allNodes[selectedNodes[i]].savedLabel;
+              allNodes[selectedNodes[i]].savedLabel = undefined;
+            }
+          }
+        } else if (filterActive === true) {
+          // reset all nodes
+          for (let nodeId in allNodes) {
+            allNodes[nodeId].hidden = false;
+            if (allNodes[nodeId].savedLabel !== undefined) {
+              allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+              allNodes[nodeId].savedLabel = undefined;
+            }
+          }
+          filterActive = false;
+        }
+
+        // transform the object into an array
+        var updateArray = [];
+        if (params.nodes.length > 0) {
+          for (let nodeId in allNodes) {
+            if (allNodes.hasOwnProperty(nodeId)) {
+              updateArray.push(allNodes[nodeId]);
+            }
+          }
+          nodes.update(updateArray);
+        } else {
+          for (let nodeId in allNodes) {
+            if (allNodes.hasOwnProperty(nodeId)) {
+              updateArray.push(allNodes[nodeId]);
+            }
+          }
+          nodes.update(updateArray);
+        }
+      }
+
+      function selectNode(nodes) {
+        network.selectNodes(nodes);
+        neighbourhoodHighlight({ nodes: nodes });
+        return nodes;
+      }
+
+      function selectNodes(nodes) {
+        network.selectNodes(nodes);
+        filterHighlight({ nodes: nodes });
+        return nodes;
+      }
+
+      function highlightFilter(filter) {
+        let selectedNodes = [];
+        let selectedProp = filter["property"];
+        if (filter["item"] === "node") {
+          let allNodes = nodes.get({ returnType: "Object" });
+          for (let nodeId in allNodes) {
+            if (
+              allNodes[nodeId][selectedProp] &&
+              filter["value"].includes(
+                allNodes[nodeId][selectedProp].toString()
+              )
+            ) {
+              selectedNodes.push(nodeId);
+            }
+          }
+        } else if (filter["item"] === "edge") {
+          let allEdges = edges.get({ returnType: "object" });
+          // check if the selected property exists for selected edge and select the nodes connected to the edge
+          for (let edge in allEdges) {
+            if (
+              allEdges[edge][selectedProp] &&
+              filter["value"].includes(allEdges[edge][selectedProp].toString())
+            ) {
+              selectedNodes.push(allEdges[edge]["from"]);
+              selectedNodes.push(allEdges[edge]["to"]);
+            }
+          }
+        }
+        selectNodes(selectedNodes);
+      }
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css"
+      integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js"
+      integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+      crossorigin="anonymous"
+    ></script>
+
+    <style type="text/css">
+      #mynetwork {
+        width: 100%;
+        height: 100vh;
+        background-color: #ffffff;
+        border: none;
+        position: relative;
+      }
+
+      .legend {
+        padding: 10px;
+        background-color: white;
+        border: 1px solid #ccc;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        border-radius: 5px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      .legend-color {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+      }
+
+      #mynetwork {
+        flex: 1;
+        transition: width 0.3s ease;
+      }
+
+      #mynetwork.split {
+        width: 50%;
+      }
+
+      #article-sidebar {
+        width: 0;
+        height: 100vh;
+        background: #f5f5f5;
+        border-left: 2px solid #D4B896;
+        overflow-y: auto;
+        transition: width 0.3s ease;
+        position: relative;
+      }
+
+      #article-sidebar.open {
+        width: 50%;
+      }
+
+      #article-content {
+        padding: 20px;
+      }
+
+      .header-controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .logo-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+      }
+
+      .back-button {
+        background: linear-gradient(135deg, #0a1929 0%, #1a2332 100%);
+        color: #F5E6D3;
+        border: 2px solid #D4B896;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .back-button:hover {
+        background: linear-gradient(135deg, #1a2332 0%, #2a3342 100%);
+        border-color: #E5D2A2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212, 184, 150, 0.3);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header-controls">
+      <a href="search.html" class="back-button">
+        ← Back to Search
+      </a>
+    </div>
+
+    <div class="logo-container">
+      <img src="../assets/image.png" alt="ReLib Logo" class="logo">
+    </div>
+    
+    <div id="mynetwork"></div>
+    
+    <div id="article-sidebar">
+      <div id="article-content">
+        <div id="article-text"></div>
+      </div>
+    </div>
+
+    <!-- Load API client -->
+    <script src="api-client.js"></script>
+    <!-- Load graph data and functionality -->
+    <script src="graph-data.js"></script>
+    <script type="text/javascript">
+      document.addEventListener("DOMContentLoaded", function () {
+        // Check for search parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
+        
+        if (searchQuery) {
+          console.log(`Search query: ${searchQuery}`);
+          // You can implement search/filter logic here
+          // For now, we'll just load the full graph
+        }
+
+        // This method is responsible for drawing the graph
+        async function drawGraph() {
+          var container = document.getElementById("mynetwork");
+
+          // Load graph data from the external file
+          var graphData = await loadGraphData();
+          
+          // Get the raw node and edge data
+          var nodesArray = graphData.nodes.get();
+          var edgesArray = graphData.edges.get();
+
+          // Sort by drawOrder if present (fallback to original order)
+          nodesArray.sort((a, b) => {
+            const orderA = a.drawOrder !== undefined ? a.drawOrder : 999;
+            const orderB = b.drawOrder !== undefined ? b.drawOrder : 999;
+            return orderA - orderB;
+          });
+          
+          edgesArray.sort((a, b) => {
+            const orderA = a.drawOrder !== undefined ? a.drawOrder : 0;
+            const orderB = b.drawOrder !== undefined ? b.drawOrder : 0;
+            return orderA - orderB;
+          });
+
+          console.log(`Preparing to add ${nodesArray.length} nodes and ${edgesArray.length} edges dynamically (sorted by drawOrder)`);
+
+          // Create empty DataSets
+          nodes = new vis.DataSet([]);
+          edges = new vis.DataSet([]);
+
+          // Define network options
+          var options = {
+            configure: {
+              enabled: false,
+            },
+            nodes: {
+              shape: 'box',
+              font: { 
+                size: 12, 
+                color: '#ffffff' 
+              },
+              color: {
+                border: '#0a1929',
+                background: '#0a1929',
+                highlight: {
+                  border: '#0a1929',
+                  background: '#1a2332'
+                }
+              }
+            },
+            edges: {
+              color: {
+                color: "#0a1929",
+                opacity: 1.0,
+              },
+              smooth: {
+                enabled: true,
+                type: "dynamic",
+              },
+              scaling: {
+                min: 1,
+                max: 2,
+              },
+            },
+            interaction: {
+              dragNodes: true,
+              hideEdgesOnDrag: false,
+              hideNodesOnDrag: false,
+              hover: true,
+            },
+            physics: {
+              forceAtlas2Based: {
+                avoidOverlap: 0,
+                centralGravity: 0.015,
+                damping: 0.4,
+                gravitationalConstant: -50,
+                springConstant: 0.08,
+                springLength: 100,
+              },
+              solver: "forceAtlas2Based",
+              stabilization: {
+                enabled: true,
+                fit: true,
+                iterations: 1000,
+                onlyDynamicEdges: false,
+                updateInterval: 50,
+              },
+            },
+          };
+
+          // Create network with empty data
+          data = { nodes: nodes, edges: edges };
+          network = new vis.Network(container, data, options);
+
+          // Set up event listeners
+          network.on("selectNode", function(params) {
+            neighbourhoodHighlight(params);
+            handleNodeClick(params);
+          });
+
+          // Deselect all nodes when clicking on empty space
+          network.on("deselectNode", function(params) {
+            neighbourhoodHighlight(params);
+          });
+
+          network.on("click", function(params) {
+            // If clicking on canvas (not on a node)
+            if (params.nodes.length === 0) {
+              network.unselectAll();
+              neighbourhoodHighlight({ nodes: [] });
+              closeSidebar();
+            }
+          });
+
+          // Add nodes and edges dynamically one by one
+          await addNodesAndEdgesDynamically(nodesArray, edgesArray);
+
+          return network;
+        }
+
+        // Handle node click to show Wikipedia article
+        let mainArticleTitle = null;
+        let articleCache = null;
+
+        function handleNodeClick(params) {
+          if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            const node = nodes.get(nodeId);
+            if (node) {
+              // Check if this is the first node (article title) or a section
+              if (node.draw_order === 1 || mainArticleTitle === null) {
+                // This is the main article node
+                mainArticleTitle = node.label;
+                openWikipediaArticle(node.label, node.content);
+              } else {
+                // This is a section node - scroll to section in already loaded article
+                scrollToSectionInArticle(node.label);
+              }
+            }
+          }
+        }
+
+        // Scroll to a section within the loaded article
+        function scrollToSectionInArticle(sectionTitle) {
+          const sidebar = document.getElementById('article-sidebar');
+          const articleText = document.getElementById('article-text');
+          
+          // Open sidebar if not already open
+          if (!sidebar.classList.contains('open')) {
+            sidebar.classList.add('open');
+            document.getElementById('mynetwork').classList.add('split');
+          }
+
+          // Find and scroll to the section heading
+          const headings = articleText.querySelectorAll('h3, h4');
+          for (let heading of headings) {
+            if (heading.textContent.includes(sectionTitle)) {
+              heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              
+              // Highlight the section briefly
+              heading.style.backgroundColor = '#D4B896';
+              heading.style.padding = '5px';
+              setTimeout(() => {
+                heading.style.backgroundColor = '';
+                heading.style.padding = '';
+              }, 2000);
+              
+              // Add "Visit section on Wikipedia" link if not already present
+              let visitLink = heading.nextElementSibling;
+              if (!visitLink || !visitLink.classList.contains('visit-section-link')) {
+                const sectionAnchor = heading.id.replace('section-', '');
+                // Get the actual section anchor from the data
+                const wikiLink = `https://en.wikipedia.org/wiki/${encodeURIComponent(mainArticleTitle)}#${encodeURIComponent(sectionTitle.replace(/ /g, '_'))}`;
+                
+                const linkDiv = document.createElement('div');
+                linkDiv.className = 'visit-section-link';
+                linkDiv.style.cssText = 'margin: 10px 0 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #D4B896; border-radius: 4px;';
+                linkDiv.innerHTML = `
+                  <a href="${wikiLink}" target="_blank" style="color: #0a1929; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    Visit this section on Wikipedia
+                  </a>
+                `;
+                heading.parentNode.insertBefore(linkDiv, heading.nextSibling);
+              }
+              
+              return;
+            }
+          }
+        }
+
+        // Highlight colonizer and native terms in text
+        function highlightColonialTerms(text) {
+          // Colonizer-related terms (highlight in red)
+          const colonizerTerms = [
+            'French', 'France', 'colonial', 'colonization', 'protectorate', 'occupation', 
+            'European', 'settlers', 'colonists', 'imperial', 'empire', 'conquest',
+            'invasion', 'Resident-General', 'metropolitan', 'Vichy', 'Italian', 'Italy'
+          ];
+          
+          // Native/Tunisian terms (highlight in green)
+          const nativeTerms = [
+            'Tunisian', 'Tunisia', 'Bey', 'Arab', 'Berber', 'indigenous', 'native',
+            'nationalist', 'independence', 'sovereignty', 'Bourguiba', 'Neo Destour',
+            'Destour', 'resistance', 'rebellion', 'Moncef', 'Khroumir', 'Bedouin'
+          ];
+          
+          // Action verbs connecting colonizer and native terms (highlight in yellow)
+          const actionVerbs = [
+            // Colonial actions (aggression/control)
+            'occupied', 'invaded', 'conquered', 'controlled', 'established', 'imposed',
+            'forced', 'signed', 'defeated', 'suppressed', 'ruled', 'governed',
+            'seized', 'captured', 'annexed', 'colonized', 'exploited', 'oppressed',
+            'subjugated', 'dominated', 'subdued', 'pacified', 'crushed', 'quelled',
+            'encroached', 'penetrated', 'expanded', 'extended', 'asserted', 'enforced',
+            'mandated', 'compelled', 'coerced', 'intimidated', 'threatened', 'attacked',
+            'bombarded', 'raided', 'plundered', 'confiscated', 'appropriated', 'expropriated',
+            'dispossessed', 'displaced', 'expelled', 'evicted', 'deported', 'banished',
+            'imprisoned', 'arrested', 'detained', 'executed', 'massacred', 'slaughtered',
+            // Administrative/legal colonial actions
+            'administered', 'supervised', 'directed', 'managed', 'regulated', 'restricted',
+            'prohibited', 'banned', 'censored', 'sanctioned', 'punished', 'fined',
+            'taxed', 'levied', 'extracted', 'demanded', 'requisitioned', 'conscripted',
+            'recruited', 'drafted', 'mobilized', 'deployed', 'stationed', 'garrisoned',
+            // Economic colonial actions
+            'exploited', 'extracted', 'monopolized', 'dominated', 'controlled', 'manipulated',
+            'undermined', 'destroyed', 'disrupted', 'impoverished', 'indebted', 'bankrupted',
+            // Cultural/social colonial actions
+            'civilized', 'modernized', 'reformed', 'transformed', 'assimilated', 'converted',
+            'educated', 'trained', 'indoctrinated', 'influenced', 'persuaded', 'convinced',
+            // Resistance actions (native responses)
+            'resisted', 'fought', 'rebelled', 'protested', 'demanded', 'revolted',
+            'opposed', 'challenged', 'contested', 'defied', 'rejected', 'refused',
+            'mobilized', 'organized', 'united', 'rallied', 'assembled', 'gathered',
+            'agitated', 'campaigned', 'advocated', 'petitioned', 'negotiated', 'bargained',
+            'struggled', 'battled', 'clashed', 'confronted', 'defended', 'protected',
+            'sabotaged', 'disrupted', 'obstructed', 'hindered', 'impeded', 'blocked',
+            // Liberation/independence actions
+            'gained', 'achieved', 'won', 'obtained', 'secured', 'liberated',
+            'freed', 'emancipated', 'decolonized', 'reclaimed', 'recovered', 'restored',
+            'reestablished', 'reasserted', 'regained', 'retrieved', 'repossessed',
+            // Transitional/treaty actions
+            'granted', 'abolished', 'terminated', 'ended', 'withdrew', 'retreated',
+            'evacuated', 'abandoned', 'relinquished', 'ceded', 'transferred', 'handed',
+            'negotiated', 'agreed', 'recognized', 'acknowledged', 'accepted', 'conceded',
+            'deposed', 'overthrew', 'ousted', 'removed', 'replaced', 'succeeded','entered'
+          ];
+          
+          // Create regex patterns for whole word matching
+          const colonizerPattern = new RegExp(`\\b(${colonizerTerms.join('|')})\\b`, 'gi');
+          const nativePattern = new RegExp(`\\b(${nativeTerms.join('|')})\\b`, 'gi');
+          const verbPattern = new RegExp(`\\b(${actionVerbs.join('|')})\\b`, 'gi');
+          
+          // First highlight verbs in yellow (do this first so they take precedence in context)
+          text = text.replace(verbPattern, '<span style="background-color: rgba(255, 193, 7, 0.3); color: #856404; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          // Then highlight colonizer terms in red
+          text = text.replace(colonizerPattern, '<span style="background-color: rgba(220, 53, 69, 0.2); color: #8B0000; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          // Finally highlight native terms in green
+          text = text.replace(nativePattern, '<span style="background-color: rgba(40, 167, 69, 0.2); color: #155724; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          return text;
+        }
+
+        // Open Wikipedia article in sidebar
+        async function openWikipediaArticle(title, content) {
+          const sidebar = document.getElementById('article-sidebar');
+          const articleText = document.getElementById('article-text');
+          const networkDiv = document.getElementById('mynetwork');
+          
+          // Show loading state
+          articleText.innerHTML = '<h2>' + title + '</h2><p>Loading Wikipedia article...</p>';
+          sidebar.classList.add('open');
+          networkDiv.classList.add('split');
+
+          try {
+            // Search for Wikipedia article
+            const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(title)}&format=json&origin=*`;
+            const searchResponse = await fetch(searchUrl);
+            const searchData = await searchResponse.json();
+            
+            if (searchData.query.search.length === 0) {
+              articleText.innerHTML = '<h2>' + title + '</h2><p>No Wikipedia article found.</p><p>' + (content || '') + '</p>';
+              return;
+            }
+
+            const pageTitle = searchData.query.search[0].title;
+            
+            // Fetch full article content with sections
+            const contentUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageTitle)}&prop=sections|text&format=json&origin=*`;
+            const contentResponse = await fetch(contentUrl);
+            const contentData = await contentResponse.json();
+            
+            if (contentData.error) {
+              articleText.innerHTML = '<h2>' + title + '</h2><p>Article not found.</p>';
+              return;
+            }
+
+            const sections = contentData.parse.sections || [];
+            const htmlContent = contentData.parse.text['*'];
+            
+            // Parse the HTML to extract text content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, 'text/html');
+            
+            // Remove reference links, edit links, and other metadata
+            doc.querySelectorAll('.mw-editsection, sup.reference, .infobox, .navbox, .vertical-navbox, .sistersitebox, .noprint').forEach(el => el.remove());
+            
+            // Build sections HTML
+            let sectionsHTML = '';
+            sections.forEach(section => {
+              if (section.line && section.toclevel <= 2) { // Only show main sections and first subsections
+                const heading = section.toclevel === 1 ? 'h3' : 'h4';
+                const sectionId = `section-${section.index}`;
+                sectionsHTML += `<${heading} id="${sectionId}" style="margin-top: 20px; color: #0a1929; cursor: pointer;" onclick="scrollToSection('${sectionId}')">${section.line}</${heading}>`;
+                
+                // Find content for this section - use getElementById or escape special characters
+                let sectionHeading = null;
+                try {
+                  // Try to find by ID directly without querySelector to avoid escaping issues
+                  sectionHeading = doc.getElementById(section.anchor);
+                } catch (e) {
+                  console.warn('Could not find section:', section.anchor);
+                }
+                
+                if (sectionHeading) {
+                  let content = '';
+                  let sibling = sectionHeading.parentElement.nextElementSibling;
+                  while (sibling && !sibling.querySelector('h2, h3')) {
+                    if (sibling.tagName === 'P') {
+                      content += sibling.textContent + '\n\n';
+                    }
+                    sibling = sibling.nextElementSibling;
+                    if (content.length > 500) break; // Limit content length
+                  }
+                  // Highlight colonial terms in the content
+                  const highlightedContent = highlightColonialTerms(content || 'No content available.');
+                  sectionsHTML += `<div style="margin-left: ${section.toclevel === 2 ? '20px' : '0'}; line-height: 1.6; color: #333;">${highlightedContent}</div>`;
+                }
+              }
+            });
+            
+            // Display article with sections
+            const wikiLink = `https://en.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+            const highlightedContent = content ? highlightColonialTerms(content) : '';
+            articleText.innerHTML = `
+              <h2>${pageTitle}</h2>
+              <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #D4B896; border-radius: 4px;">
+                <a href="${wikiLink}" target="_blank" style="color: #0a1929; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                  Visit full article on Wikipedia
+                </a>
+              </div>
+              <div style="margin-top: 20px;">
+                ${sectionsHTML || '<p>No sections available.</p>'}
+              </div>
+              ${highlightedContent ? '<h3 style="margin-top: 30px; color: #0a1929;">Node Information:</h3><p style="line-height: 1.6;">' + highlightedContent + '</p>' : ''}
+            `;
+          } catch (error) {
+            console.error('Error fetching Wikipedia article:', error);
+            articleText.innerHTML = '<h2>' + title + '</h2><p>Error loading article. Please try again.</p>';
+          }
+        }
+
+        // Add nodes and edges one by one with animation
+        async function addNodesAndEdgesDynamically(nodesArray, edgesArray) {
+          const nodeDelay = 400; // Delay between adding each node with its edges
+
+          console.log("Starting dynamic node and edge addition...");
+
+          // Create a map of edges by source node for quick lookup
+          const edgesByNode = {};
+          edgesArray.forEach(edge => {
+            if (!edgesByNode[edge.from]) {
+              edgesByNode[edge.from] = [];
+            }
+            edgesByNode[edge.from].push(edge);
+          });
+
+          // Add nodes one by one, ensuring all edges from previous nodes are added first
+          for (let i = 0; i < nodesArray.length; i++) {
+            const node = nodesArray[i];
+            console.log(`Adding node ${i + 1}/${nodesArray.length}: ${node.label}`);
+            
+            // Add the node
+            nodes.add(node);
+            
+            // Now check all previous nodes and add any edges that point to this new node
+            for (let j = 0; j < i; j++) {
+              const prevNode = nodesArray[j];
+              const prevNodeEdges = edgesByNode[prevNode.id] || [];
+              
+              for (const edge of prevNodeEdges) {
+                // Add edge if it points to the newly added node and hasn't been added yet
+                if (edge.to === node.id && !edges.get(edge.id)) {
+                  console.log(`  Adding edge from ${prevNode.label} to ${node.label}`);
+                  edges.add(edge);
+                }
+              }
+            }
+            
+            // Wait before adding next node
+            await new Promise(resolve => setTimeout(resolve, nodeDelay));
+          }
+
+          // Add any remaining edges (in case some were skipped because target didn't exist yet)
+          console.log("Adding any remaining edges...");
+          const existingEdgeIds = new Set(edges.getIds());
+          const remainingEdges = edgesArray.filter(edge => !existingEdgeIds.has(edge.id));
+          
+          for (const edge of remainingEdges) {
+            if (nodes.get(edge.from) && nodes.get(edge.to)) {
+              console.log(`  Adding remaining edge: ${edge.from} -> ${edge.to}`);
+              edges.add(edge);
+            }
+          }
+
+          console.log("All nodes and edges added dynamically!");
+
+          // Store references to all edges
+          allEdges = edges.get({ returnType: "Object" });
+        }
+
+        // Draw the graph
+        drawGraph().catch(error => {
+          console.error("Failed to draw graph:", error);
+          alert("Failed to load graph. Check console for details.");
+        });
+      });
+
+      // Global function to close sidebar (needs to be outside DOMContentLoaded for onclick)
+      function closeSidebar() {
+        const sidebar = document.getElementById('article-sidebar');
+        const networkDiv = document.getElementById('mynetwork');
+        if (sidebar && networkDiv) {
+          sidebar.classList.remove('open');
+          networkDiv.classList.remove('split');
+        }
+      }
+    </script>
+  </body>
+</html>
