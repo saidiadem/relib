@@ -139,7 +139,7 @@ class GraphQueryService:
                 title="Source: 0.80",
                 draw_order=8,
                 dashes=True,
-                arrows="from",
+                arrows="to",
             ),
             GraphEdge(
                 source="source2",
@@ -150,7 +150,7 @@ class GraphQueryService:
                 title="Source: 0.85",
                 draw_order=9,
                 dashes=True,
-                arrows="from",
+                arrows="to",
             ),
             GraphEdge(
                 source="fact1",
