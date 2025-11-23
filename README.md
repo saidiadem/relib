@@ -134,11 +134,10 @@ ReLib consists of three main components:
 
    ```bash
    # From the backend directory
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
 
    The API will be available at `http://localhost:8000`
-
    - API Documentation: `http://localhost:8000/docs`
    - Alternative Docs: `http://localhost:8000/redoc`
 
