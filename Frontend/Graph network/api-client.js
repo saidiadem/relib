@@ -183,15 +183,30 @@ class GraphAPIClient {
             font: { color: "#36454F" },
             x: node.x,
             y: node.y,
+            drawOrder: node.draw_order,
         }));
 
-        const edgesData = graphData.edges.map((edge) => ({
-            from: edge.source,
-            to: edge.target,
-            width: edge.width || edge.similarity * 3,
-            title: edge.title || `Similarity: ${edge.similarity.toFixed(2)}`,
-            value: edge.value || edge.similarity,
-        }));
+        const edgesData = graphData.edges.map((edge, index) => {
+            console.log(`Processing edge ${index}:`, edge);
+            const edgeObj = {
+                id: `edge_${edge.source}_${edge.target}_${index}`,
+                from: edge.source,
+                to: edge.target,
+                width: edge.width || 2,
+                title: edge.title || `Similarity: ${edge.similarity.toFixed(2)}`,
+                dashes: edge.dashes || false,
+                drawOrder: edge.draw_order,
+            };
+            
+            // Add arrows if specified - vis.js accepts string format
+            if (edge.arrows) {
+                edgeObj.arrows = edge.arrows; // Should be "from", "to", or "to;from"
+                console.log(`Edge ${edgeObj.id} has arrows: ${edge.arrows}`);
+            }
+            
+            console.log(`Final edge object:`, edgeObj);
+            return edgeObj;
+        });
 
         return {
             nodes: new vis.DataSet(nodesData),
