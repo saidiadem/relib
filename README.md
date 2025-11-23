@@ -153,7 +153,59 @@ ReLib consists of three main components:
 5. **Access the Application**
 
    - Landing Page: `http://localhost:8080/Landing%20page/index.html`
-   - Graph Visualization: `http://localhost:8080/Graph%20network/graph.html?search=Tunisia`
+   - Graph Visualization: `http://localhost:8080/Graph%20network/index.html`
+
+## 🎮 Running the Application
+
+### Quick Start
+
+Once you have completed the installation, follow these steps to run ReLib:
+
+1. **Start the Backend Server** (Terminal 1)
+   ```bash
+   cd backend
+   uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+   ```
+   
+   You should see output like:
+   ```
+   INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+   INFO:     Started reloader process
+   INFO:     Started server process
+   INFO:     Waiting for application startup.
+   INFO:     Application startup complete.
+   ```
+
+2. **Start the Frontend Server** (Terminal 2)
+   ```bash
+   cd Frontend
+   python -m http.server 8080
+   ```
+   
+   You should see:
+   ```
+   Serving HTTP on :: port 8080 (http://[::]:8080/) ...
+   ```
+
+3. **Open in Browser**
+   
+   Navigate to: `http://localhost:8080/Graph%20network/index.html`
+
+### Verifying the Setup
+
+- **Backend Health Check**: Visit `http://localhost:8000/docs` to see the interactive API documentation
+- **Frontend**: The graph visualization should load with the French Protectorate of Tunisia network
+- **Wikipedia Integration**: Click on any article node to load Wikipedia content in the sidebar
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Backend won't start | Ensure virtual environment is activated and dependencies are installed: `uv pip install -r requirements.txt` |
+| Frontend shows blank page | Check browser console for errors. Verify backend is running on port 8000 |
+| CORS errors | Ensure backend `origins` list includes `http://localhost:8080` in `app/main.py` |
+| Graph doesn't load data | Verify `apiBaseURL` in `graph-data.js` points to `http://localhost:8000/api/v1` |
+| Port already in use | Change port numbers: Backend `--port 8001`, Frontend `python -m http.server 8081` |
 
 ### Configuration
 
