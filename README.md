@@ -145,7 +145,7 @@ ReLib consists of three main components:
 4. **Frontend Setup**
 
    ```bash
-   cd ../frontend
+   cd ../Frontend
 
    # For development, use Python's built-in HTTP server
    python -m http.server 8080
@@ -153,7 +153,6 @@ ReLib consists of three main components:
 
 5. **Access the Application**
 
-   - Landing Page: `http://localhost:8080/Landing%20page/index.html`
    - Graph Visualization: `http://localhost:8080/Graph%20network/index.html`
 
 ## 🎮 Running the Application
@@ -224,7 +223,7 @@ origins = [
 ]
 ```
 
-**Frontend Configuration** (`frontend/Graph network/graph-data.js`):
+**Frontend Configuration** (`Frontend/Graph network/graph-data.js`):
 
 ```javascript
 var dataMode = "api"; // Use backend API
@@ -313,28 +312,32 @@ backend/
             schemas.py               # Request/response schemas
         services/
             graph_query_service.py   # Knowledge graph service with sample data
+            analysis_orchestrator.py # Analysis orchestration service
+            knowledge_graph_builder.py # Graph building utilities
+            wikipedia_service.py     # Wikipedia API integration
+        analyzers/
+            actor_analyzer.py        # Actor analysis
+            agency_analyzer.py       # Agency detection
+            context_analyzer.py      # Context analysis
+            language_analyzer.py     # Language pattern analysis
+            provenance_scorer.py     # Source provenance scoring
+        data/                        # Data files for analysis
     requirements.txt                 # Python dependencies
+    pyproject.toml                  # Project configuration
     .venv/                          # Virtual environment
 
-frontend/
+Frontend/
     Graph network/
-        graph.html                   # Main graph visualization
+        index.html                   # Main graph visualization page
+        graph.html                   # Alternative graph page
         graph-data.js                # Data management and API integration
+        graph-init.js                # Graph initialization
+        graph-highlight.js           # Node highlighting functionality
+        graph-filter.js              # Filtering functionality
         api-client.js                # API communication utilities
         styles.css                   # Graph visualization styles
-        search.html                  # Alternative search page
-        index.html                   # Main landing page with search
-
-
     assets/
         image.png                    # ReLib logo
-        anvaka-vs.css               # Visual styles
-        style.css                   # Global styles
-
-wiki-graph/                         # Additional wiki graph components
-    src/
-        core-anvaka-vs/             # Graph layout algorithms
-        lib/                        # Shared libraries
 ```
 
 ## 💻 Development Guidelines
@@ -348,11 +351,12 @@ wiki-graph/                         # Additional wiki graph components
 
 ### Frontend Development
 
-1. **Graph Data**: Manage nodes and edges in `graph-data.js`
+1. **Graph Data**: Manage nodes and edges in `Frontend/Graph network/graph-data.js`
 2. **API Integration**: All backend communication through `api-client.js`
-3. **Wikipedia Integration**: Article fetching in `graph.html` via MediaWiki API
-4. **Highlighting**: Colonial term detection in `highlightColonialTerms()` function
-5. **Color Coding**: Source differentiation (red/green dots) defined in backend data
+3. **Wikipedia Integration**: Article fetching via MediaWiki API
+4. **Highlighting**: Node highlighting managed in `graph-highlight.js`
+5. **Filtering**: Graph filtering functionality in `graph-filter.js`
+6. **Initialization**: Graph setup and configuration in `graph-init.js`
 
 ### Adding New Sources
 
@@ -395,17 +399,6 @@ GraphNode(
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## 🎯 Current Implementation
-
-The platform currently features:
-
-- **Article**: French protectorate of Tunisia
-- **Sections**: Context, Conquest, Occupation, Organisation and administration, World War II, Independence
-- **Sources**:
-  - 11 Western/Colonial sources (red dots): Perkins, Wesseling, Ling, Aldrich, Ganiage, US Dept of State, Wade, UN, Holt & Chilton, Balch, Commercial Treaties
-  - 1 Tunisian source (green dot): Arfaoui Khémais
-- **Highlighting**: 100+ colonial/native terms and action verbs
 
 ## 📄 License
 
