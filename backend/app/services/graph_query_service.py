@@ -17,135 +17,148 @@ class GraphQueryService:
         self._initialize_sample_data()
 
     def _initialize_sample_data(self):
-        """Initialize with sample vaccine sentiment data"""
-        # Define sample nodes
-        provax_nodes = [
+        """Initialize with Tunisia historical facts"""
+        # Define historical fact nodes
+        colonial_era = [
             GraphNode(
-                id="provax1",
-                label="Vaccines save lives",
-                content="Vaccines have been scientifically proven to save millions of lives worldwide",
+                id="fact1",
+                label="Tunisia was nothing before France",
+                content="Tunisia had no significant development or infrastructure before French colonization",
+                group=1,
+                size=12,
+                color="#808080",
+                shape="box",
+                draw_order=1,
+            ),
+            GraphNode(
+                id="fact2",
+                label="French Protectorate established 1881",
+                content="France established a protectorate over Tunisia in 1881",
                 group=1,
                 size=10,
-                color="#34A853",
-                shape="dot",
+                color="#808080",
+                shape="box",
+                draw_order=2,
             ),
             GraphNode(
-                id="provax2",
-                label="Herd immunity protects everyone",
-                content="High vaccination rates create herd immunity that protects vulnerable populations",
-                group=1,
-                size=8,
-                color="#34A853",
-                shape="dot",
-            ),
-            GraphNode(
-                id="provax3",
-                label="Vaccines undergo rigorous testing",
-                content="All vaccines undergo extensive clinical trials to ensure safety and efficacy",
+                id="fact3",
+                label="French modernization projects",
+                content="France built railways, ports, and administrative infrastructure",
                 group=1,
                 size=9,
-                color="#34A853",
-                shape="dot",
+                color="#808080",
+                shape="box",
+                draw_order=3,
             ),
         ]
 
-        antivax_nodes = [
+        independence_era = [
             GraphNode(
-                id="antivax1",
-                label="Vaccines contain toxins",
-                content="Vaccines contain dangerous chemicals and toxins that harm the body",
+                id="fact4",
+                label="Independence in 1956",
+                content="Tunisia gained independence from France on March 20, 1956",
                 group=2,
-                size=7,
-                color="#EA4335",
-                shape="dot",
+                size=11,
+                color="#808080",
+                shape="box",
+                draw_order=4,
             ),
             GraphNode(
-                id="antivax2",
-                label="Natural immunity is better",
-                content="Natural immunity from getting sick is superior to vaccine-induced immunity",
+                id="fact5",
+                label="Habib Bourguiba first president",
+                content="Habib Bourguiba became the first president of independent Tunisia",
                 group=2,
-                size=6,
-                color="#EA4335",
-                shape="dot",
+                size=10,
+                color="#808080",
+                shape="box",
+                draw_order=5,
             ),
         ]
 
-        hesitancy_nodes = [
+        modern_era = [
             GraphNode(
-                id="hesitancy1",
-                label="Need more research",
-                content="We need more long-term studies on vaccine effects",
+                id="fact6",
+                label="Arab Spring revolution 2011",
+                content="Tunisia sparked the Arab Spring with the Jasmine Revolution",
                 group=3,
-                size=8,
-                color="#FBBC05",
-                shape="dot",
+                size=10,
+                color="#808080",
+                shape="box",
+                draw_order=6,
             ),
             GraphNode(
-                id="hesitancy2",
-                label="Individual risk assessment",
-                content="People should assess their personal risk before vaccination",
+                id="fact7",
+                label="Democratic transition",
+                content="Tunisia transitioned to democracy after the 2011 revolution",
                 group=3,
-                size=7,
-                color="#FBBC05",
-                shape="dot",
+                size=9,
+                color="#808080",
+                shape="box",
+                draw_order=7,
             ),
         ]
 
-        all_nodes = provax_nodes + antivax_nodes + hesitancy_nodes
+        all_nodes = colonial_era + independence_era + modern_era
 
         for node in all_nodes:
             self._nodes_cache[node.id] = node
             self.graph.add_node(node.id, **node.model_dump())
 
-        # Define sample edges
+        # Define historical connections
         sample_edges = [
             GraphEdge(
-                source="provax1",
-                target="provax2",
-                similarity=0.8,
-                width=2.4,
-                value=0.8,
-                title="Similarity: 0.80",
+                source="fact1",
+                target="fact2",
+                similarity=0.9,
+                width=2.7,
+                value=0.9,
+                title="Led to: 0.90",
+                draw_order=1,
             ),
             GraphEdge(
-                source="provax1",
-                target="provax3",
+                source="fact2",
+                target="fact3",
+                similarity=0.85,
+                width=2.55,
+                value=0.85,
+                title="Resulted in: 0.85",
+                draw_order=2,
+            ),
+            GraphEdge(
+                source="fact3",
+                target="fact4",
                 similarity=0.7,
                 width=2.1,
                 value=0.7,
-                title="Similarity: 0.70",
+                title="Preceded: 0.70",
+                draw_order=3,
             ),
             GraphEdge(
-                source="antivax1",
-                target="antivax2",
-                similarity=0.5,
-                width=1.5,
-                value=0.5,
-                title="Similarity: 0.50",
+                source="fact4",
+                target="fact5",
+                similarity=0.95,
+                width=2.85,
+                value=0.95,
+                title="Directly led to: 0.95",
+                draw_order=4,
             ),
             GraphEdge(
-                source="hesitancy1",
-                target="provax3",
-                similarity=0.42,
-                width=1.26,
-                value=0.42,
-                title="Similarity: 0.42",
+                source="fact5",
+                target="fact6",
+                similarity=0.6,
+                width=1.8,
+                value=0.6,
+                title="Historical context: 0.60",
+                draw_order=5,
             ),
             GraphEdge(
-                source="hesitancy1",
-                target="antivax2",
-                similarity=0.48,
-                width=1.44,
-                value=0.48,
-                title="Similarity: 0.48",
-            ),
-            GraphEdge(
-                source="hesitancy2",
-                target="antivax2",
-                similarity=0.48,
-                width=1.44,
-                value=0.48,
-                title="Similarity: 0.48",
+                source="fact6",
+                target="fact7",
+                similarity=0.9,
+                width=2.7,
+                value=0.9,
+                title="Resulted in: 0.90",
+                draw_order=6,
             ),
         ]
 
