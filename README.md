@@ -317,8 +317,6 @@ backend/
     .venv/                          # Virtual environment
 
 frontend/
-    Landing page/
-        index.html                   # Main landing page with search
     Graph network/
         graph.html                   # Main graph visualization
         graph-data.js                # Data management and API integration
