@@ -3,7 +3,10 @@ Application configuration
 """
 
 from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
 from typing import List
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -23,10 +26,17 @@ class Settings(BaseSettings):
     # Wikipedia API
     WIKIPEDIA_USER_AGENT: str = "DecolonialFactChecker/1.0"
 
+    # OpenAI API
+    OPENAI_API_KEY: str = ""
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    
     # NLP Models
     SPACY_MODEL_EN: str = "en_core_web_trf"
     SPACY_MODEL_MULTILINGUAL: str = "xx_ent_wiki_sm"
 
+    # Graph Settings
+    SIMILARITY_THRESHOLD: float = 0.3  # Minimum similarity to create edge
+    
     # Analysis Settings
     PASSIVE_VIOLENCE_THRESHOLD: float = 0.3
     COLONIAL_LANGUAGE_SEVERITY_WEIGHTS: dict = {"high": 1.0, "medium": 0.5, "low": 0.2}

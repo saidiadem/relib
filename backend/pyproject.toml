@@ -7,10 +7,12 @@ requires-python = ">=3.13"
 dependencies = [
     "deep-translator>=1.11.4",
     "fastapi[standard]>=0.121.3",
+    "helpers>=0.2.0",
     "httpx>=0.28.1",
     "mwparserfromhell>=0.7.2",
     "networkx>=3.5",
     "numpy>=2.3.5",
+    "openai>=2.8.1",
     "pandas>=2.3.3",
     "pydantic>=2.12.4",
     "pydantic-settings>=2.12.0",

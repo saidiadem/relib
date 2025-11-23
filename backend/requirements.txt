@@ -4,6 +4,9 @@ pydantic
 pydantic-settings
 python-multipart
 
+# OpenAI
+openai
+
 # Wikipedia
 wikipedia-api
 mwparserfromhell
@@ -11,14 +14,17 @@ mwparserfromhell
 # NLP
 spacy
 networkx
+
 # Translation & Semantic
 deep-translator
 sentence-transformers
 python-Levenshtein
+
 # Data processing
 numpy
 pandas
 scikit-learn
+
 # Utilities
 python-dotenv
 httpx
