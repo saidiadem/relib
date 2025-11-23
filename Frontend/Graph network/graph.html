@@ -14,13 +14,14 @@
           var selectedNode = params.nodes[0];
           var degrees = 2;
 
-          // mark all nodes as hard to read.
+          // mark all nodes as dimmed
           for (let nodeId in allNodes) {
-            // nodeColors[nodeId] = allNodes[nodeId].color;
-            allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+            allNodes[nodeId].color = "#c0c0c0";
             if (allNodes[nodeId].hiddenLabel === undefined) {
               allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
-              allNodes[nodeId].label = undefined;
+              // Create placeholder text of same length
+              const labelLength = allNodes[nodeId].label ? allNodes[nodeId].label.length : 0;
+              allNodes[nodeId].label = ' '.repeat(labelLength);
             }
           }
           var connectedNodes = network.getConnectedNodes(selectedNode);
@@ -35,10 +36,9 @@
             }
           }
 
-          // all second degree nodes get a different color and their label back
+          // all second degree nodes get their original color back
           for (i = 0; i < allConnectedNodes.length; i++) {
-            // allNodes[allConnectedNodes[i]].color = "pink";
-            allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+            allNodes[allConnectedNodes[i]].color = nodeColors[allConnectedNodes[i]];
             if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
               allNodes[allConnectedNodes[i]].label =
                 allNodes[allConnectedNodes[i]].hiddenLabel;
@@ -262,6 +262,34 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+        display: flex;
+      }
+
+      #mynetwork {
+        flex: 1;
+        transition: width 0.3s ease;
+      }
+
+      #mynetwork.split {
+        width: 50%;
+      }
+
+      #article-sidebar {
+        width: 0;
+        height: 100vh;
+        background: #f5f5f5;
+        border-left: 2px solid #D4B896;
+        overflow-y: auto;
+        transition: width 0.3s ease;
+        position: relative;
+      }
+
+      #article-sidebar.open {
+        width: 50%;
+      }
+
+      #article-content {
+        padding: 20px;
       }
 
       .header-controls {
@@ -324,6 +352,12 @@
     </div>
     
     <div id="mynetwork"></div>
+    
+    <div id="article-sidebar">
+      <div id="article-content">
+        <div id="article-text"></div>
+      </div>
+    </div>
 
     <!-- Load API client -->
     <script src="api-client.js"></script>
@@ -436,12 +470,87 @@
           network = new vis.Network(container, data, options);
 
           // Set up event listeners
-          network.on("selectNode", neighbourhoodHighlight);
+          network.on("selectNode", function(params) {
+            neighbourhoodHighlight(params);
+            handleNodeClick(params);
+          });
+
+          // Deselect all nodes when clicking on empty space
+          network.on("deselectNode", function(params) {
+            neighbourhoodHighlight(params);
+          });
+
+          network.on("click", function(params) {
+            // If clicking on canvas (not on a node)
+            if (params.nodes.length === 0) {
+              network.unselectAll();
+              neighbourhoodHighlight({ nodes: [] });
+              closeSidebar();
+            }
+          });
 
           // Add nodes and edges dynamically one by one
           await addNodesAndEdgesDynamically(nodesArray, edgesArray);
 
           return network;
+        }
+
+        // Handle node click to show Wikipedia article
+        function handleNodeClick(params) {
+          if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            const node = nodes.get(nodeId);
+            if (node) {
+              openWikipediaArticle(node.label, node.content);
+            }
+          }
+        }
+
+        // Open Wikipedia article in sidebar
+        async function openWikipediaArticle(title, content) {
+          const sidebar = document.getElementById('article-sidebar');
+          const articleText = document.getElementById('article-text');
+          const networkDiv = document.getElementById('mynetwork');
+          
+          // Show loading state
+          articleText.innerHTML = '<h2>' + title + '</h2><p>Loading Wikipedia article...</p>';
+          sidebar.classList.add('open');
+          networkDiv.classList.add('split');
+
+          try {
+            // Search for Wikipedia article
+            const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(title)}&format=json&origin=*`;
+            const searchResponse = await fetch(searchUrl);
+            const searchData = await searchResponse.json();
+            
+            if (searchData.query.search.length === 0) {
+              articleText.innerHTML = '<h2>' + title + '</h2><p>No Wikipedia article found.</p><p>' + (content || '') + '</p>';
+              return;
+            }
+
+            const pageTitle = searchData.query.search[0].title;
+            
+            // Fetch article content
+            const contentUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=extracts&exintro=true&explaintext=true&format=json&origin=*`;
+            const contentResponse = await fetch(contentUrl);
+            const contentData = await contentResponse.json();
+            
+            const pages = contentData.query.pages;
+            const pageId = Object.keys(pages)[0];
+            const extract = pages[pageId].extract || 'No content available.';
+            
+            // Display article
+            const wikiLink = `https://en.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+            articleText.innerHTML = `
+              <h2>${pageTitle}</h2>
+              <p><a href="${wikiLink}" target="_blank" style="color: #0a1929;">View full article on Wikipedia →</a></p>
+              <div style="margin-top: 20px; line-height: 1.6;">${extract}</div>
+              ${content ? '<h3 style="margin-top: 30px;">Node Content:</h3><p>' + content + '</p>' : ''}
+            `;
+          } catch (error) {
+            console.error('Error fetching Wikipedia article:', error);
+            articleText.innerHTML = '<h2>' + title + '</h2><p>Error loading article. Please try again.</p>';
+          }
         }
 
         // Add nodes and edges one by one with animation
@@ -509,6 +618,16 @@
           alert("Failed to load graph. Check console for details.");
         });
       });
+
+      // Global function to close sidebar (needs to be outside DOMContentLoaded for onclick)
+      function closeSidebar() {
+        const sidebar = document.getElementById('article-sidebar');
+        const networkDiv = document.getElementById('mynetwork');
+        if (sidebar && networkDiv) {
+          sidebar.classList.remove('open');
+          networkDiv.classList.remove('split');
+        }
+      }
     </script>
   </body>
 </html>
