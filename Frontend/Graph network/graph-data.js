@@ -42,17 +42,47 @@ async function loadGraphDataFromAPI() {
     console.log(`Loaded ${graphData.nodes.length} nodes and ${graphData.edges.length} edges from API`);
 
     // Convert API format to vis.js format
-    const nodesData = graphData.nodes.map((node) => ({
-      id: node.id,
-      label: node.label,
-      content: node.content,
-      group: node.group,
-      shape: node.shape || "dot",
-      size: node.size || 5,
-      color: node.color,
-      font: { color: "#36454F" },
-      drawOrder: node.draw_order,
-    }));
+    const nodesData = graphData.nodes.map((node) => {
+      const nodeConfig = {
+        id: node.id,
+        label: node.label,
+        content: node.content,
+        group: node.group,
+        shape: node.shape || "dot",
+        size: node.size || 5,
+        font: { color: "#36454F" },
+        drawOrder: node.draw_order,
+      };
+
+      // Handle color - can be string or object with background/border (aura)
+      if (node.color) {
+        if (typeof node.color === 'string') {
+          nodeConfig.color = node.color;
+        } else if (typeof node.color === 'object') {
+          // Set the main background color, keep border same as background
+          nodeConfig.color = {
+            background: node.color.background || '#D4B896',
+            border: node.color.background || '#D4B896',
+            highlight: {
+              background: node.color.background || '#D4B896',
+              border: node.color.background || '#D4B896'
+            }
+          };
+          // Add shadow (aura effect) around the box with the border color
+          nodeConfig.shadow = {
+            enabled: true,
+            color: node.color.border || '#D4B896',
+            size: 20,
+            x: 0,
+            y: 0
+          };
+          // Remove border width to make it cleaner
+          nodeConfig.borderWidth = 0;
+        }
+      }
+
+      return nodeConfig;
+    });
 
     const edgesData = graphData.edges.map((edge, index) => {
       const edgeObj = {

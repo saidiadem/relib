@@ -570,6 +570,80 @@
           }
         }
 
+        // Highlight colonizer and native terms in text
+        function highlightColonialTerms(text) {
+          // Colonizer-related terms (highlight in red)
+          const colonizerTerms = [
+            'French', 'France', 'colonial', 'colonization', 'protectorate', 'occupation', 
+            'European', 'settlers', 'colonists', 'imperial', 'empire', 'conquest',
+            'invasion', 'Resident-General', 'metropolitan', 'Vichy', 'Italian', 'Italy'
+          ];
+          
+          // Native/Tunisian terms (highlight in green)
+          const nativeTerms = [
+            'Tunisian', 'Tunisia', 'Bey', 'Arab', 'Berber', 'indigenous', 'native',
+            'nationalist', 'independence', 'sovereignty', 'Bourguiba', 'Neo Destour',
+            'Destour', 'resistance', 'rebellion', 'Moncef', 'Khroumir', 'Bedouin'
+          ];
+          
+          // Action verbs connecting colonizer and native terms (highlight in yellow)
+          const actionVerbs = [
+            // Colonial actions (aggression/control)
+            'occupied', 'invaded', 'conquered', 'controlled', 'established', 'imposed',
+            'forced', 'signed', 'defeated', 'suppressed', 'ruled', 'governed',
+            'seized', 'captured', 'annexed', 'colonized', 'exploited', 'oppressed',
+            'subjugated', 'dominated', 'subdued', 'pacified', 'crushed', 'quelled',
+            'encroached', 'penetrated', 'expanded', 'extended', 'asserted', 'enforced',
+            'mandated', 'compelled', 'coerced', 'intimidated', 'threatened', 'attacked',
+            'bombarded', 'raided', 'plundered', 'confiscated', 'appropriated', 'expropriated',
+            'dispossessed', 'displaced', 'expelled', 'evicted', 'deported', 'banished',
+            'imprisoned', 'arrested', 'detained', 'executed', 'massacred', 'slaughtered',
+            // Administrative/legal colonial actions
+            'administered', 'supervised', 'directed', 'managed', 'regulated', 'restricted',
+            'prohibited', 'banned', 'censored', 'sanctioned', 'punished', 'fined',
+            'taxed', 'levied', 'extracted', 'demanded', 'requisitioned', 'conscripted',
+            'recruited', 'drafted', 'mobilized', 'deployed', 'stationed', 'garrisoned',
+            // Economic colonial actions
+            'exploited', 'extracted', 'monopolized', 'dominated', 'controlled', 'manipulated',
+            'undermined', 'destroyed', 'disrupted', 'impoverished', 'indebted', 'bankrupted',
+            // Cultural/social colonial actions
+            'civilized', 'modernized', 'reformed', 'transformed', 'assimilated', 'converted',
+            'educated', 'trained', 'indoctrinated', 'influenced', 'persuaded', 'convinced',
+            // Resistance actions (native responses)
+            'resisted', 'fought', 'rebelled', 'protested', 'demanded', 'revolted',
+            'opposed', 'challenged', 'contested', 'defied', 'rejected', 'refused',
+            'mobilized', 'organized', 'united', 'rallied', 'assembled', 'gathered',
+            'agitated', 'campaigned', 'advocated', 'petitioned', 'negotiated', 'bargained',
+            'struggled', 'battled', 'clashed', 'confronted', 'defended', 'protected',
+            'sabotaged', 'disrupted', 'obstructed', 'hindered', 'impeded', 'blocked',
+            // Liberation/independence actions
+            'gained', 'achieved', 'won', 'obtained', 'secured', 'liberated',
+            'freed', 'emancipated', 'decolonized', 'reclaimed', 'recovered', 'restored',
+            'reestablished', 'reasserted', 'regained', 'retrieved', 'repossessed',
+            // Transitional/treaty actions
+            'granted', 'abolished', 'terminated', 'ended', 'withdrew', 'retreated',
+            'evacuated', 'abandoned', 'relinquished', 'ceded', 'transferred', 'handed',
+            'negotiated', 'agreed', 'recognized', 'acknowledged', 'accepted', 'conceded',
+            'deposed', 'overthrew', 'ousted', 'removed', 'replaced', 'succeeded','entered'
+          ];
+          
+          // Create regex patterns for whole word matching
+          const colonizerPattern = new RegExp(`\\b(${colonizerTerms.join('|')})\\b`, 'gi');
+          const nativePattern = new RegExp(`\\b(${nativeTerms.join('|')})\\b`, 'gi');
+          const verbPattern = new RegExp(`\\b(${actionVerbs.join('|')})\\b`, 'gi');
+          
+          // First highlight verbs in yellow (do this first so they take precedence in context)
+          text = text.replace(verbPattern, '<span style="background-color: rgba(255, 193, 7, 0.3); color: #856404; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          // Then highlight colonizer terms in red
+          text = text.replace(colonizerPattern, '<span style="background-color: rgba(220, 53, 69, 0.2); color: #8B0000; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          // Finally highlight native terms in green
+          text = text.replace(nativePattern, '<span style="background-color: rgba(40, 167, 69, 0.2); color: #155724; font-weight: 500; padding: 1px 3px; border-radius: 2px;">$1</span>');
+          
+          return text;
+        }
+
         // Open Wikipedia article in sidebar
         async function openWikipediaArticle(title, content) {
           const sidebar = document.getElementById('article-sidebar');
@@ -641,13 +715,16 @@
                     sibling = sibling.nextElementSibling;
                     if (content.length > 500) break; // Limit content length
                   }
-                  sectionsHTML += `<div style="margin-left: ${section.toclevel === 2 ? '20px' : '0'}; line-height: 1.6; color: #333;">${content || 'No content available.'}</div>`;
+                  // Highlight colonial terms in the content
+                  const highlightedContent = highlightColonialTerms(content || 'No content available.');
+                  sectionsHTML += `<div style="margin-left: ${section.toclevel === 2 ? '20px' : '0'}; line-height: 1.6; color: #333;">${highlightedContent}</div>`;
                 }
               }
             });
             
             // Display article with sections
             const wikiLink = `https://en.wikipedia.org/wiki/${encodeURIComponent(pageTitle)}`;
+            const highlightedContent = content ? highlightColonialTerms(content) : '';
             articleText.innerHTML = `
               <h2>${pageTitle}</h2>
               <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #D4B896; border-radius: 4px;">
@@ -663,7 +740,7 @@
               <div style="margin-top: 20px;">
                 ${sectionsHTML || '<p>No sections available.</p>'}
               </div>
-              ${content ? '<h3 style="margin-top: 30px; color: #0a1929;">Node Information:</h3><p style="line-height: 1.6;">' + content + '</p>' : ''}
+              ${highlightedContent ? '<h3 style="margin-top: 30px; color: #0a1929;">Node Information:</h3><p style="line-height: 1.6;">' + highlightedContent + '</p>' : ''}
             `;
           } catch (error) {
             console.error('Error fetching Wikipedia article:', error);

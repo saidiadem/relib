@@ -3,7 +3,7 @@ Graph-specific data models
 """
 
 from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
+from typing import List, Dict, Optional, Any, Union
 
 
 class GraphNode(BaseModel):
@@ -14,8 +14,9 @@ class GraphNode(BaseModel):
     content: Optional[str] = None
     group: int = Field(default=1, description="Node group/category")
     size: float = Field(default=5, description="Node size based on importance")
-    color: Optional[str] = None
+    color: Optional[Union[str, Dict[str, str]]] = None
     shape: str = Field(default="box")
+    borderWidth: Optional[int] = Field(default=2, description="Border width in pixels")
     x: Optional[float] = None
     y: Optional[float] = None
     draw_order: Optional[int] = Field(
