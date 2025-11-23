@@ -64,12 +64,12 @@ async function loadGraphDataFromAPI() {
         dashes: edge.dashes || false,
         drawOrder: edge.draw_order,
       };
-      
+
       // Add arrows if specified
       if (edge.arrows) {
         edgeObj.arrows = edge.arrows;
       }
-      
+
       return edgeObj;
     });
 

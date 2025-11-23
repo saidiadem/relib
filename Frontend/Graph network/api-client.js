@@ -197,13 +197,13 @@ class GraphAPIClient {
                 dashes: edge.dashes || false,
                 drawOrder: edge.draw_order,
             };
-            
+
             // Add arrows if specified - vis.js accepts string format
             if (edge.arrows) {
                 edgeObj.arrows = edge.arrows; // Should be "from", "to", or "to;from"
                 console.log(`Edge ${edgeObj.id} has arrows: ${edge.arrows}`);
             }
-            
+
             console.log(`Final edge object:`, edgeObj);
             return edgeObj;
         });

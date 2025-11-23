@@ -33,8 +33,12 @@ class GraphEdge(BaseModel):
     width: Optional[float] = None
     title: Optional[str] = None
     value: Optional[float] = None
-    dashes: Optional[bool] = Field(default=None, description="Whether edge should be dashed")
-    arrows: Optional[str] = Field(default=None, description="Arrow direction: 'to', 'from', or 'to,from'")
+    dashes: Optional[bool] = Field(
+        default=None, description="Whether edge should be dashed"
+    )
+    arrows: Optional[str] = Field(
+        default=None, description="Arrow direction: 'to', 'from', or 'to,from'"
+    )
     draw_order: Optional[int] = Field(
         default=None, description="Order in which to draw this edge"
     )
