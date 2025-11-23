@@ -138,6 +138,7 @@ ReLib consists of three main components:
    ```
 
    The API will be available at `http://localhost:8000`
+
    - API Documentation: `http://localhost:8000/docs`
    - Alternative Docs: `http://localhost:8000/redoc`
 
@@ -162,12 +163,14 @@ ReLib consists of three main components:
 Once you have completed the installation, follow these steps to run ReLib:
 
 1. **Start the Backend Server** (Terminal 1)
+
    ```bash
    cd backend
    uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
-   
+
    You should see output like:
+
    ```
    INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
    INFO:     Started reloader process
@@ -177,18 +180,20 @@ Once you have completed the installation, follow these steps to run ReLib:
    ```
 
 2. **Start the Frontend Server** (Terminal 2)
+
    ```bash
    cd Frontend
    python -m http.server 8080
    ```
-   
+
    You should see:
+
    ```
    Serving HTTP on :: port 8080 (http://[::]:8080/) ...
    ```
 
 3. **Open in Browser**
-   
+
    Navigate to: `http://localhost:8080/Graph%20network/index.html`
 
 ### Verifying the Setup
@@ -199,13 +204,13 @@ Once you have completed the installation, follow these steps to run ReLib:
 
 ### Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Backend won't start | Ensure virtual environment is activated and dependencies are installed: `uv pip install -r requirements.txt` |
-| Frontend shows blank page | Check browser console for errors. Verify backend is running on port 8000 |
-| CORS errors | Ensure backend `origins` list includes `http://localhost:8080` in `app/main.py` |
-| Graph doesn't load data | Verify `apiBaseURL` in `graph-data.js` points to `http://localhost:8000/api/v1` |
-| Port already in use | Change port numbers: Backend `--port 8001`, Frontend `python -m http.server 8081` |
+| Issue                     | Solution                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Backend won't start       | Ensure virtual environment is activated and dependencies are installed: `uv pip install -r requirements.txt` |
+| Frontend shows blank page | Check browser console for errors. Verify backend is running on port 8000                                     |
+| CORS errors               | Ensure backend `origins` list includes `http://localhost:8080` in `app/main.py`                              |
+| Graph doesn't load data   | Verify `apiBaseURL` in `graph-data.js` points to `http://localhost:8000/api/v1`                              |
+| Port already in use       | Change port numbers: Backend `--port 8001`, Frontend `python -m http.server 8081`                            |
 
 ### Configuration
 
