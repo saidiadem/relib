@@ -1,0 +1,92 @@
+{
+  "article_title": "Si Ronda",
+  "languages": [
+    "en"
+  ],
+  "include_summary": true,
+  "cached_at": "2025-11-23T04:53:14.745190",
+  "graph": {
+    "nodes": [
+      {
+        "id": "summary_0",
+        "label": "Summary",
+        "content": "Si Ronda is a 1930 silent film from the Dutch East Indies which was directed by Lie Tek Swie and starred Bachtiar Effendi. Based on contemporary Betawi oral tradition, it follows the exploits of a ban...",
+        "group": 0,
+        "size": 13.165,
+        "color": "#D4B896",
+        "shape": "box",
+        "x": null,
+        "y": null,
+        "draw_order": 1,
+        "metadata": {
+          "level": 0,
+          "type": "summary",
+          "has_embedding": false,
+          "text_length": 633
+        }
+      },
+      {
+        "id": "section_1",
+        "label": "Production",
+        "content": "Si Ronda was adapted from a lenong (a Betawi oral tradition similar to a stage play) popular with ethnic Chinese and native audiences of the time. The Ronda stories follow the Betawi bandit of the sam...",
+        "group": 1,
+        "size": 18.985,
+        "color": "#D4B896",
+        "shape": "box",
+        "x": null,
+        "y": null,
+        "draw_order": 2,
+        "metadata": {
+          "level": 1,
+          "type": "section",
+          "has_embedding": false,
+          "text_length": 1797
+        }
+      },
+      {
+        "id": "section_2",
+        "label": "Release and legacy",
+        "content": "Si Ronda was released in 1930; Effendi stated that it was released before Tan's Nancy Bikin Pembalesan (Nancy Takes Revenge), a sequel to Njai Dasima, began screening in May 1930. Dutch newspapers ind...",
+        "group": 1,
+        "size": 16.97,
+        "color": "#D4B896",
+        "shape": "box",
+        "x": null,
+        "y": null,
+        "draw_order": 3,
+        "metadata": {
+          "level": 1,
+          "type": "section",
+          "has_embedding": false,
+          "text_length": 1394
+        }
+      }
+    ],
+    "edges": [],
+    "metadata": {
+      "node_count": 3,
+      "edge_count": 0,
+      "section_node_count": 3,
+      "source_node_count": 0,
+      "topic_edge_count": 0,
+      "source_edge_count": 0,
+      "article_title": "Si Ronda",
+      "languages": [
+        "az",
+        "bew",
+        "cy",
+        "fr",
+        "id",
+        "ms",
+        "tn",
+        "tr",
+        "zh"
+      ],
+      "similarity_threshold": 0.3,
+      "embedding_model": "text-embedding-3-small",
+      "avg_similarity": 0.0,
+      "max_similarity": 0.0,
+      "min_similarity": 0.0
+    }
+  }
+}

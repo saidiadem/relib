@@ -23,9 +23,8 @@ class Settings(BaseSettings):
     # Wikipedia API
     WIKIPEDIA_USER_AGENT: str = "DecolonialFactChecker/1.0"
 
-    # OpenAI API
-    OPENAI_API_KEY: str = ""
-    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
+    # Embedding Model (Local - sentence-transformers)
+    EMBEDDING_MODEL: str = "Alibaba-NLP/gte-multilingual-base"
     
     # NLP Models
     SPACY_MODEL_EN: str = "en_core_web_trf"
