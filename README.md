@@ -21,12 +21,9 @@
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
-- [Architecture](#-architecture)
-- [Technology Stack](#-technology-stack)
 - [Installation & Setup](#-installation--setup)
 - [API Documentation](#-api-documentation)
 - [Project Structure](#-project-structure)
-- [Development Guidelines](#-development-guidelines)
 - [License](#-license)
 
 ## 🔍 Overview
